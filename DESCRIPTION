@@ -5,9 +5,9 @@ Version: 0.1.0
 Authors@R: person("John", "Humphreys", email = "unp7@cdc.gov",
                   role = c("aut", "cre"))
 Maintainer: The package maintainer <unp7@cdc.gov>
-Description: Package provides functions to faciltate data preprocessing, Conditional
+Description: Package provides functions to facilitate data pre-processing, Conditional
     Autoregressive (CAR) model construction, and formatting of model results for submission
-    to the (covid19-forecast-hub)[https://github.com/reichlab/covid19-forecast-hub].
+    to the covid19-forecast-hub.
 License: MIT
 Encoding: UTF-8
 LazyData: true
