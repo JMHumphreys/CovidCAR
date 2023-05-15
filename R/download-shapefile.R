@@ -1,34 +1,55 @@
-#' Downloads and reads US state boundaries shapefiles into an `sf` object
+#' Downloads and reads US jurisdiction boundary polygons
 #'
-#' This function downloads the US state boundaries shapefiles from a specific URL and saves them to the specified
-#' output directory. The downloaded zip file is then unzipped and the resulting shapefiles are read into an `sf`
-#' object using the 'st_read' function from the 'sf' package.
+#' @param output_dir character string specifying the path/to/output/directory where the extracted shapefiles will be stored
+#' @param unit character string specifying the level of geographic unit for which shapefile is needed. Defaults to "state".
+#' @param proj character string specifying the desired coordinate reference system (CRS). Defaults to "EPSG:5070".
 #'
-#' @param output_dir The output directory where the shapefiles will be saved and read from.
-#' @return An `sf` object containing the US state boundaries shapefiles.
-#' @importFrom sf st_read
+#' @return A SpatialPolygonsDataFrame object.
+#'
 #' @examples
-#' States <- download_shapefile("./polygons")
-download_shapefile <- function(output_dir) {
+#' download_boundaries(output_dir = "C:/MyFiles", unit = "county", proj = "EPSG:4326")
+#'
+#' @import ggplot2
+#' @import rgdal
+#' @importFrom rgeos gBuffer
+#' @importFrom sf st_read
+download_boundaries <- function(output_dir, unit = "state", proj = "EPSG:5070") {
+
   # Create output directory if it does not exist
   dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
   # Specify URL
-  url <- "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/us-state-boundaries/exports/shp?lang=en&timezone=America%2FDenver"
+  if (unit == "county"){
+    url <- "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/us-county-boundaries/exports/shp?lang=en&timezone=America%2FDenver"
+    layer_name <- "georef-united-states-of-america-county-millesime"
+  } else if (unit == "state") {
+    url <- "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/us-state-boundaries/exports/shp"
+    layer_name <- "us-state-boundaries"
+  } else {
+    stop("Please specify unit as 'state' or 'county'")
+  }
 
-  # Download zip file
+  # Download and extract shapefiles to output directory
   temp_zip <- tempfile(fileext = ".zip")
-  download.file(url, destfile = temp_zip, mode = "wb")
 
-  # Unzip shapefiles to output directory
+  tryCatch({
+    download.file(url, destfile = temp_zip, mode = "wb", timeout = 100)
+  }, error = function(e) {
+    message(sprintf("Unable to download file from URL", url))
+    stop(e)
+  })
+
+
   unzip(temp_zip, exdir = output_dir)
-
-  # Remove temporary zip file
   file.remove(temp_zip)
 
   # Read shapefiles into sf object
-  States <- st_read(dsn = output_dir, layer = "us-state-boundaries")
+  polygons <- st_read(dsn = output_dir, layer = layer_name)
 
-  # Return sf object
-  return(States)
+  # Project and fix topology
+  polygons <- st_transform(polygons, crs = proj)
+  polygons <- st_buffer(polygons, dist = 0)
+
+  # Return sf object as SpatialPolygonsDataFrame
+  return(as(polygons, "Spatial"))
 }
