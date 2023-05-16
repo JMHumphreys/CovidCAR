@@ -39,7 +39,7 @@ get_covid19_obs <- function(source = c("covidcast","cache","test"), start_date, 
          },
          "test" = {
            message("Loading test data for the period 2021-06-28 through 2021-09-20")
-           load("Covid19_hosp.RData")
+           load("data/Covid19_hosp.RData")
            signal_data <- Covid19_hosp
          }
   )
