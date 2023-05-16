@@ -28,6 +28,7 @@ get_covid19_obs <- function(source = c("covidcast","cache","test"), start_date, 
              select(date, geo_value, value, signal) %>%
              left_join(state_crosswalk, by = "geo_value") %>%
              select(-geo_value)
+             signal_data$location_name[signal_data$location_name == "U.S. Virgin Islands"] = "Virgin Islands"
          },
          "cache" = {
            message("Loading COVID-19 forecast functions")
