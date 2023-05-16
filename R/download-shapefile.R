@@ -1,5 +1,8 @@
 #' Downloads and reads US jurisdiction boundary polygons
 #'
+#' Polygon files are retrieved from https://public.opendatasoft.com/ and is in the public Domain.
+#'
+#'
 #' @param output_dir character string specifying the path/to/output/directory where the extracted shapefiles will be stored
 #' @param unit character string specifying the level of geographic unit for which shapefile is needed. Defaults to "state".
 #' @param proj character string specifying the desired coordinate reference system (CRS). Defaults to "EPSG:5070".

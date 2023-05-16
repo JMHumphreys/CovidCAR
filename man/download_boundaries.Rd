@@ -17,7 +17,7 @@ download_boundaries(output_dir, unit = "state", proj = "EPSG:5070")
 A SpatialPolygonsDataFrame object.
 }
 \description{
-Downloads and reads US jurisdiction boundary polygons
+Polygon files are retrieved from https://public.opendatasoft.com/ and is in the public Domain.
 }
 \examples{
 download_boundaries(output_dir = "C:/MyFiles", unit = "county", proj = "EPSG:4326")
