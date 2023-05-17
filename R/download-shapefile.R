@@ -1,47 +1,51 @@
-#' Downloads and reads US jurisdiction boundary polygons
+#' Download US Boundaries
 #'
-#' Polygon files are retrieved from https://public.opendatasoft.com/ and is in the public Domain.
+#' Downloads and extracts shapefiles for either US states or counties. It creates a directory in the specified location if one does not exist already. The function downloads the shapefile from the specified URL, unzips it, reads it into an object of class 'sf', changes its projection to that of "EPSG:5070", fixes topology, matches state name with observation data and assigns unique identifiers.
 #'
-#'
-#' @param output_dir character string specifying the path/to/output/directory where the extracted shapefiles will be stored
-#' @param unit character string specifying the level of geographic unit for which shapefile is needed. Defaults to "state".
-#' @param proj character string specifying the desired coordinate reference system (CRS). Defaults to "EPSG:5070".
-#'
-#' @return A SpatialPolygonsDataFrame object.
-#'
+#' @param output_dir Path to the output directory where you want the shapefile to be saved, defaults to working directory.
+#' @param unit A character string indicating whether to download state or county borders, default is "state".
+#' @param proj Projection for the shapefiles, defaults to "EPSG:5070".
+#' @return An object of class 'SpatialPolygonsDataFrame' which contains the state or county border polygons and their associated attributes.
 #' @examples
-#' download_boundaries(output_dir = "C:/MyFiles", unit = "county", proj = "EPSG:4326")
+#' \donotrun{
+#' #Download state boundaries to a directory called 'States':
+#' download_boundaries("./States")
 #'
-#' @import ggplot2
-#' @import rgdal
-#' @importFrom rgeos gBuffer
-#' @importFrom sf st_read
+#' #Download county boundaries to a directory called 'Counties':
+#' download_boundaries("./Counties", unit = "county")
+#' }
+#'
+#' @importFrom plyr mapvalues
+#' @importFrom tools toTitleCase
+#' @importFrom httr GET
+#' @importFrom utils dir.create
+#' @importFrom sf st_read st_transform st_make_valid
+#' @importFrom stats as nrow
+#' @export
 download_boundaries <- function(output_dir, unit = "state", proj = "EPSG:5070") {
 
   # Create output directory if it does not exist
   dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
   # Specify URL
-  if (unit == "county"){
-    url <- "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/us-county-boundaries/exports/shp?lang=en&timezone=America%2FDenver"
-    layer_name <- "georef-united-states-of-america-county-millesime"
-  } else if (unit == "state") {
-    url <- "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/us-state-boundaries/exports/shp"
-    layer_name <- "us-state-boundaries"
-  } else {
-    stop("Please specify unit as 'state' or 'county'")
-  }
+  url_county <- "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/us-county-boundaries/exports/shp?lang=en&timezone=America%2FDenver"
+  url_state <- "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/us-state-boundaries/exports/shp"
+
+  layer_name_county <- "georef-united-states-of-america-county-millesime"
+  layer_name_state <- "us-state-boundaries"
+
+  url <- ifelse(unit == "county", url_county, url_state)
+  layer_name <- ifelse(unit == "county", layer_name_county, layer_name_state)
 
   # Download and extract shapefiles to output directory
   temp_zip <- tempfile(fileext = ".zip")
 
   tryCatch({
-    download.file(url, destfile = temp_zip, mode = "wb", timeout = 100)
+    httr::GET(url, httr::write_disk(temp_zip))
   }, error = function(e) {
-    message(sprintf("Unable to download file from URL", url))
+    message(sprintf("Unable to download file from URL %s", url))
     stop(e)
   })
-
 
   unzip(temp_zip, exdir = output_dir)
   file.remove(temp_zip)
@@ -51,8 +55,22 @@ download_boundaries <- function(output_dir, unit = "state", proj = "EPSG:5070") 
 
   # Project and fix topology
   polygons <- st_transform(polygons, crs = proj)
-  polygons <- st_buffer(polygons, dist = 0)
+  polygons <- st_make_valid(polygons)
 
-  # Return sf object as SpatialPolygonsDataFrame
+  if(unit == "state"){
+    # Lookup table for state name adjustments
+    state_lookup <- c("Commonwealth of the Northern Mariana Islands" = "Northern Mariana Islands",
+                      "District Of Columbia" = "District of Columbia",
+                      "United States Virgin Islands" = "Virgin Islands")
+
+    # Adjust state names to match observation data
+    polygons$name <- dplyr::recode(polygons$name, !!!state_lookup)
+
+    # Assign unique identifiers
+    polygons$Region <- 1:nrow(polygons)
+    polygons$State <- tools::toTitleCase(polygons$name)
+  }
+
+  # Return indexed object as SpatialPolygonsDataFrame object
   return(as(polygons, "Spatial"))
 }

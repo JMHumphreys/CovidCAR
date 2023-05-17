@@ -1,39 +1,71 @@
-#' This function creates a forecast template using the input training data and specific dates for forecasting.
-
-#' @param train_data A data frame containing the training data with columns for location, date, and value
-#' @param forecast_horiz_start The starting date for the forecast horizon in yyyy-mm-dd format as a character string
-#' @param forecast_horiz_end The ending date for the forecast horizon in yyyy-mm-dd format as a character string
-#' @return A data frame containing the forecast template with columns for location, date, value, signal, day, trn_tst, and region_table
-#' @import dplyr
-create_forecast_template <- function(train_data, forecast_horiz_start, forecast_horiz_end){
-
-  #Convert the forecast horizon into a character vector
-  forecast_horiz_vector <- as.character(seq(forecast_horiz_start, forecast_horiz_end, 1))
-
-  #Find the unique locations from the input training data
+#' Create a Forecast Template
+#'
+#' This function creates a forecast template for the given dataset where the output includes all unique locations from the input data and the specified forecast horizon.
+#'
+#' @param train_data Input data used to create the forecast template.
+#' @param forecast_horiz_start Start date of the forecast horizon.
+#' @param forecast_horiz_end End date of the forecast horizon.
+#'
+#' @return Returns a data frame containing the forecast template.
+#' The output has the following columns: \code{location}, \code{date}, \code{value}, \code{signal}, \code{day}, and \code{trn_tst}.
+#' Each row of the output dataframe will contain a unique location from the input dataset, and dates ranging from \code{forecast_horiz_start} to \code{forecast_horiz_end}.
+#' The values in the \code{value} column are left as NA.
+#' The \code{signal} column is set to "hosp" indicating hospital data.
+#' The \code{day} column specifies the weekday for the corresponding date.
+#' The \code{trn_tst} column indicates whether the observation was part of the training or test dataset. For the forecast template, all rows will have "test".
+#' The final output contains only distinct observations with respect to columns \code{date} and \code{location}.
+#' Additionally, the dataset returned by this function contains an additional column named 'Region' joined from the original input data.
+#'
+#' @examples
+#' library(dplyr)
+#' library(lubridate)
+#' # create sample data
+#' date_data <- seq(as.Date("2021-01-01"), as.Date("2021-01-31"), by = "day")
+#' loc_data <- c('loc1', 'loc2')
+#' val_data <- c(1, 2)
+#' hosp_data <- rep('hosp', length(date_data))
+#' day_data <- weekdays(date_data)
+#' trn_tst_data <- 'train'
+#' data <- data.frame(date = rep(date_data, length(loc_data)),
+#'                    location = rep(loc_data, each = length(date_data)),
+#'                    value = rep(val_data, each = length(date_data)),
+#'                    signal = hosp_data,
+#'                    day = rep(day_data, length(loc_data)),
+#'                    trn_tst = trn_tst_data)
+#'
+#' create_forecast_template(data, as.Date("2021-02-01"), as.Date("2021-02-10"))
+#'
+#' @importFrom dplyr select distinct left_join
+#' @importFrom lubridate as_date weekdays
+#' @export
+create_forecast_template <- function(train_data, forecast_horiz_start, forecast_horiz_end) {
   unique_loc <- unique(train_data$location)
-
-  #Calculate the length of the unique locations and the forecast horizon
   len_loc <- length(unique_loc)
-  len_for <- length(forecast_horiz_vector)
 
-  #Create vectors for location, date, value, signal, day, and trn_tst
-  location <- rep(unique_loc, len_for)
-  date <- rep(forecast_horiz_vector, len_loc)
-  value <- rep(NA, len_loclen_for)
-  signal <- rep("hosp", len_loclen_for)
-  day <- weekdays(as.Date(date))
-  trn_tst <- rep("test", len_loc*len_for)
+  date <- as_date(seq(forecast_horiz_start, forecast_horiz_end, 1))
+  len_for <- length(date)
 
-  #Combine the vectors into a data frame to create the forecast template
-  forecast_template <- data.frame(location, date, value, signal, day, trn_tst)
+  location <- rep(unique_loc, each = len_for)
+  value <- rep(NA_real_, len_loc * len_for)
+  signal <- rep("hosp", len_loc * len_for)
+  day <- weekdays(as_date(date))
+  trn_tst <- rep("test", len_loc * len_for)
 
-  #Extract the region table from the input training data
-  get_Region_table <- train_data[,c(1:3)] %>% distinct()
+  forecast_template <- data.frame(
+    location = location,
+    date = date,
+    value = value,
+    signal = signal,
+    day = day,
+    trn_tst = trn_tst
+  )
 
-  #Merge the region table with the forecast template based on location
-  forecast_template <- left_join(forecast_template, get_Region_table, by="location")
+  get_Region_table <- train_data %>% select(location_name, location, Region) %>% distinct()
+  forecast_template <- left_join(forecast_template, get_Region_table, by = "location")
 
-  #Return the completed forecast template
-  return(forecast_template)
+  train_data <- rbind(train_data, forecast_template)
+  train_data <- train_data %>%
+    distinct(date, location, .keep_all = TRUE)
+
+  return(train_data)
 }

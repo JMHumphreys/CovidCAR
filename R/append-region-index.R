@@ -15,7 +15,6 @@
 #'
 #' @export
 append_region_index <- function(train_data, polys, train_end_date) {
-  library(dplyr)
 
   Regions_data <- polys@data
 

@@ -2,24 +2,30 @@
 % Please edit documentation in R/download-shapefile.R
 \name{download_boundaries}
 \alias{download_boundaries}
-\title{Downloads and reads US jurisdiction boundary polygons}
+\title{Download US Boundaries}
 \usage{
 download_boundaries(output_dir, unit = "state", proj = "EPSG:5070")
 }
 \arguments{
-\item{output_dir}{character string specifying the path/to/output/directory where the extracted shapefiles will be stored}
+\item{output_dir}{Path to the output directory where you want the shapefile to be saved, defaults to working directory.}
 
-\item{unit}{character string specifying the level of geographic unit for which shapefile is needed. Defaults to "state".}
+\item{unit}{A character string indicating whether to download state or county borders, default is "state".}
 
-\item{proj}{character string specifying the desired coordinate reference system (CRS). Defaults to "EPSG:5070".}
+\item{proj}{Projection for the shapefiles, defaults to "EPSG:5070".}
 }
 \value{
-A SpatialPolygonsDataFrame object.
+An object of class 'SpatialPolygonsDataFrame' which contains the state or county border polygons and their associated attributes.
 }
 \description{
-Polygon files are retrieved from https://public.opendatasoft.com/ and is in the public Domain.
+Downloads and extracts shapefiles for either US states or counties. It creates a directory in the specified location if one does not exist already. The function downloads the shapefile from the specified URL, unzips it, reads it into an object of class 'sf', changes its projection to that of "EPSG:5070", fixes topology, matches state name with observation data and assigns unique identifiers.
 }
 \examples{
-download_boundaries(output_dir = "C:/MyFiles", unit = "county", proj = "EPSG:4326")
+\donotrun{
+#Download state boundaries to a directory called 'States':
+download_boundaries("./States")
+
+#Download county boundaries to a directory called 'Counties':
+download_boundaries("./Counties", unit = "county")
+}
 
 }
