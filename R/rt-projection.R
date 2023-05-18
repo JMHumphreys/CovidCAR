@@ -7,6 +7,7 @@
 #' @param forecast_horiz_end A date string representing the end of the time period to project Rt values for.
 #' @param mean_si A numeric value representing the mean serial interval for the disease being modeled. Default is 5.7.
 #' @param std_si A numeric value representing the standard deviation of the serial interval for the disease being modeled. Default is 2.
+#' @param forecast_horizon a positive integer specifying the number of periods to forecast
 #' @param method A character vector specifying the method to use for projecting Rt values. Valid options are "arima" or "dlm". Default is "arima".
 #'
 #' @return A dataframe with the same columns as `train_data`, plus an additional column `Rt` representing the projected reproductive rate for each day and location.
@@ -32,7 +33,7 @@
 #'                         method = "dlm")
 #'
 #' @export
-Rt_projection <- function(train_data, forecast_horiz_start, forecast_horiz_end, mean_si = 5.7, std_si = 2, method = c("arima", "dlm")) {
+Rt_projection <- function(train_data, forecast_horiz_start, forecast_horiz_end, mean_si = 5.7, std_si = 2, forecast_horizon = 28, method = c("arima", "dlm")) {
 
   locs_loop <- unique(train_data$location_name)
   Rt_df <- NULL # initialize output
@@ -65,14 +66,16 @@ Rt_projection <- function(train_data, forecast_horiz_start, forecast_horiz_end, 
         method = "parametric_si",
         config = config_lit)
 
+      Rt_raw = c(rep(NA,7), Rt_interpolate$R[,"Median(R)"]) #7-day lag; keep copy before forecast
+
       if (method == "arima") {
         # Run ARIMA function
         arima_out <- try(forecast_time_series(Rt_interpolate$R[,"Median(R)"],
-                                              forecast_horizon = 28), silent = TRUE)
+                                              forecast_horizon = forecast_horizon), silent = TRUE)
       } else if (method == "dlm") {
         # Run INLA DLM
         arima_out <- try(inla_dlm(Rt_interpolate$R[,"Median(R)"],
-                                  forecast_horizon = 28), silent = TRUE)
+                                  forecast_horizon = forecast_horizon), silent = TRUE)
       } else {
         stop("Specify Method as 'arima' or 'dlm'")
       }
@@ -85,14 +88,12 @@ Rt_projection <- function(train_data, forecast_horiz_start, forecast_horiz_end, 
       # Match results to dates
       match_arima <- data.frame(
         date = c(inc_vect$dates, seq(forecast_horiz_start, forecast_horiz_end, 1)),
+        Rt_raw = c(Rt_raw, rep(NA, length(seq(forecast_horiz_start, forecast_horiz_end, 1)))),
         Rt = c(arima_out[["obs_fitted"]], arima_out[["pred_trend"]])
       ) %>%
         mutate(date = as_date(date))
 
-      tmp.frame$Rt = with(match_arima,
-                          Rt[match(
-                            tmp.frame$date,
-                            date)])
+      tmp.frame = left_join(tmp.frame, match_arima, by = "date")
 
     }
 

@@ -10,6 +10,7 @@ Rt_projection(
   forecast_horiz_end,
   mean_si = 5.7,
   std_si = 2,
+  forecast_horizon = 28,
   method = c("arima", "dlm")
 )
 }
@@ -23,6 +24,8 @@ Rt_projection(
 \item{mean_si}{A numeric value representing the mean serial interval for the disease being modeled. Default is 5.7.}
 
 \item{std_si}{A numeric value representing the standard deviation of the serial interval for the disease being modeled. Default is 2.}
+
+\item{forecast_horizon}{a positive integer specifying the number of periods to forecast}
 
 \item{method}{A character vector specifying the method to use for projecting Rt values. Valid options are "arima" or "dlm". Default is "arima".}
 }

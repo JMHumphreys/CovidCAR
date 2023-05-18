@@ -25,8 +25,7 @@ inla_dlm <- function(ts_data, forecast_horizon){
   ts_df$id.1 = ts_df$id.2 = ts_df$id.3 = 1:nrow(ts_df)
 
   dlm.form <- Rt_trend ~ -1 + f(id.1, model = "rw2", constr = FALSE) +
-    f(id.2, model = "linear", mean.linear = 0, prec.linear = 0.001) +
-    f(id.3, model = "iid", constr=FALSE)
+    f(id.2, model = "linear", mean.linear = 0, prec.linear = 0.001)
 
   dlm.mod <- inla(
     dlm.form,
