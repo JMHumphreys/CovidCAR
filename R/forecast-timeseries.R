@@ -17,6 +17,9 @@
 #' forecast_time_series(ts_data, 6)
 forecast_time_series <- function(ts_data, forecast_horizon, season_period = NULL) {
 
+  if(is.null(su_yaml$forecast_horiz_start) == TRUE){
+    cli_abort("Run setup_analysis() to designate key analysis dates before proceeding")}
+
   # Convert the time series to a ts object if it is not already
   if (!is.ts(ts_data)) {
     ts_data <- ts(ts_data)

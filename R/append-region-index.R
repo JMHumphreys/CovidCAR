@@ -3,8 +3,7 @@
 #' This function extracts region data for each location from a given shapefile. It also adds additional columns for day of week and training or testing data flag.
 #'
 #' @param train_data A data frame containing training data.
-#' @param States Shapefile object containing state boundaries and regions.
-#' @param train_end_date A Date object till which we want to keep the data for training purposes.
+#' @param polys Shapefile object containing state boundaries and regions.
 #'
 #' @return Returns the modified train_data dataframe with new columns: day, trn_tst, and Region.
 #'
@@ -16,16 +15,16 @@
 #' @export
 append_region_index <- function(train_data, polys) {
 
-  if(class(train_end_date) != "Date"){
+  if(is.null(su_yaml$train_end_date) == TRUE){
     cli_abort("Run setup_analysis() to designate key analysis dates before proceeding")}
 
   Regions_data <- polys@data
 
-  idx <- match(train_data$location_name, Regions_data$name)
+  idx <- match(train_data$location_name, Regions_data$State)
 
   train_data <- train_data %>%
     mutate(day = weekdays(date),
-           trn_tst = if_else(date <= train_end_date, "train", "test"),
+           trn_tst = if_else(date <= as_date(su_yaml$train_end_date), "train", "test"),
            Region = ifelse(is.na(idx), NA, Regions_data$Region[idx]))
 
   return(train_data)

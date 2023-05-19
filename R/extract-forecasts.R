@@ -14,7 +14,7 @@
 #' @export
 extract_forecasts <- function(mod_out, dataStack, train_data) {
 
-  if(class(forecast_date) != "Date"){
+  if(is.null(su_yaml$forecast_date) == TRUE){
     cli_abort("Run setup_analysis() to designate key analysis dates before proceeding")}
 
   forecast_paths = list()
@@ -43,7 +43,7 @@ extract_forecasts <- function(mod_out, dataStack, train_data) {
 
     # Add forecast date and calculate target
     getValues <- getValues %>%
-      mutate(forecast_date = forecast_date,
+      mutate(forecast_date = as_date(su_yaml$forecast_date),
              target = as.numeric(target_end_date - forecast_date)) %>%
       subset(target >= 0) %>%
       mutate(target = paste(target, "day ahead inc hosp", sep=" "),
@@ -68,7 +68,7 @@ extract_forecasts <- function(mod_out, dataStack, train_data) {
     getValues <- bind_rows(getValues, point_est)
 
     # Create directory if it doesn't exist
-    fdir_name <- paste0(out_dir_name,"/forecasts")
+    fdir_name <- paste0(su_yaml$out_dir_name,"/forecasts")
     if (!dir.exists(fdir_name)) {
       dir.create(fdir_name)
     }
@@ -77,11 +77,10 @@ extract_forecasts <- function(mod_out, dataStack, train_data) {
     cli_progress_step("Writing model forecasts to analysis directory: ", names(mod_out)[i])
 
     # Write to .csv file in newly created directory
-    filename_loop <- paste0(fdir_name, "/", forecast_date, "-", names(mod_out)[i],"-","forecast",".csv")
+    filename_loop <- paste0(fdir_name, "/", as_date(su_yaml$forecast_date), "-", names(mod_out)[i],"-","forecast",".csv")
     write.csv(getValues, file = paste0(filename_loop), row.names = FALSE)
   }
 
-  forecast_paths <<- list.files(fdir_name, pattern='csv', full.names = TRUE, recursive = TRUE)
-  #return(forecast_paths)
+  forecast_paths <<- list.files(fdir_name, pattern='csv', full.names = TRUE, recursive = TRUE,)
 
 }

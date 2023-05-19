@@ -15,7 +15,6 @@
 #' @importFrom dplyr filter select rename arrange mutate bind_rows
 #' @importFrom EpiEstim make_config estimate_R
 #' @importFrom forecast forecast_time_series
-#' @importFrom INLA inla_dlm
 #'
 #' @examples
 #' # Load example data
@@ -35,7 +34,7 @@
 #' @export
 Rt_projection <- function(train_data, mean_si = 5.7, std_si = 2, forecast_horizon = 28, method = c("arima", "dlm")) {
 
-  if(class(forecast_horiz_start) != "Date"){
+  if(is.null(su_yaml$forecast_horiz_start) == TRUE){
     cli_abort("Run setup_analysis() to designate key analysis dates before proceeding")}
 
   locs_loop <- unique(train_data$location_name)
@@ -47,7 +46,7 @@ Rt_projection <- function(train_data, mean_si = 5.7, std_si = 2, forecast_horizo
       filter(location_name == locs_loop[i])
 
     inc_vect <- tmp.frame %>%
-      filter(!is.na(value), date < forecast_horiz_start) %>%
+      filter(!is.na(value), date < as_date(su_yaml$forecast_horiz_start)) %>%
       select(date, value) %>%
       rename(dates = date, I = value) %>%
       arrange(dates)
@@ -90,8 +89,8 @@ Rt_projection <- function(train_data, mean_si = 5.7, std_si = 2, forecast_horizo
 
       # Match results to dates
       match_arima <- data.frame(
-        date = c(inc_vect$dates, seq(forecast_horiz_start, forecast_horiz_end, 1)),
-        Rt_raw = c(Rt_raw, rep(NA, length(seq(forecast_horiz_start, forecast_horiz_end, 1)))),
+        date = c(inc_vect$dates, seq(as_date(su_yaml$forecast_horiz_start), as_date(su_yaml$forecast_horiz_end), 1)),
+        Rt_raw = c(Rt_raw, rep(NA, length(seq(as_date(su_yaml$forecast_horiz_start), as_date(su_yaml$forecast_horiz_end), 1)))),
         Rt = c(arima_out[["obs_fitted"]], arima_out[["pred_trend"]])
       ) %>%
         mutate(date = as_date(date))

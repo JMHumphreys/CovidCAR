@@ -9,7 +9,7 @@
 #' @export
 get_covid19_obs <- function(source = c("covidcast","cache","test"), start_date, end_date, write_copy = TRUE) {
 
-  if(source == "cache" & class(local_cache_dir) != "character"){
+  if(source == "cache" & class(su_yaml$local_cache_dir) != "character"){
     cli_abort("Where's the cache? Change 'source=' or run setup_analysis() to designate local cache location")}
 
   # Load state crosswalk data
@@ -39,7 +39,7 @@ get_covid19_obs <- function(source = c("covidcast","cache","test"), start_date, 
            min_date <- as.Date(start_date, format = "%Y-%m-%d")
            max_date <- as.Date(end_date, format = "%Y-%m-%d")
            signal_data <- get_observed_series(signals ="hosp", start_date = min_date,
-                                              end_date = max_date, cache_dir = local_cache_dir)
+                                              end_date = max_date, cache_dir = su_yaml$local_cache_dir)
            cli_alert("Returning data fetched from local cache")
          },
          "test" = {

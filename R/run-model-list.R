@@ -20,7 +20,7 @@ run_model_list <- function(formulas.list, dataStack, likelihood = "gaussian", co
 
   if (length(likelihood) == 1) {
     likelihood_vect <- rep(likelihood, n_models)
-    cli_h2(paste0("Specifying a ", likelihood, " likelihood for all models."))
+    cli_h2(paste0("Specifying a ", likelihood, " likelihood for all models "))
   } else if (length(likelihood) == n_models) {
     likelihood_vect <- likelihood
     cli_h2("Model likelihoods will be applied in order provided.")

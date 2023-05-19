@@ -38,13 +38,13 @@
 #' @export
 create_forecast_template <- function(train_data) {
 
-  if(class(forecast_horiz_start) != "Date"){
+  if(is.null(su_yaml$forecast_horiz_start) == TRUE){
     cli_abort("Run setup_analysis() to designate key analysis dates before proceeding")}
 
   unique_loc <- unique(train_data$location)
   len_loc <- length(unique_loc)
 
-  date <- as_date(seq(forecast_horiz_start, forecast_horiz_end, 1))
+  date <- as_date(seq(as_date(su_yaml$forecast_horiz_start), as_date(su_yaml$forecast_horiz_end), 1))
   len_for <- length(date)
 
   location <- rep(unique_loc, each = len_for)

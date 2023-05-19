@@ -1,5 +1,5 @@
 ---
-title: "A brief overview of the CovidCAR Package"
+title: "CovidCAR Package Overview"
 date: "2023-05-18"
 description: "CovidCAR is intended to facilitate Covid19 model building, ensembling, and evalutaion"
 format:
@@ -22,10 +22,13 @@ editor_options:
 ---
 
 # Tutorial Overview
-This tutorial briefly outlines core functions used to preprocess observation data, build spatial-temporal models, and post-process model outputs.  Its purpose is to demonstrate a standard workflow not to provide an in depth examination of model building techniques.   
+This tutorial briefly outlines core functions used to preprocess observation data, build spatial-temporal models, and post-process model outputs.  Its purpose is to demonstrate a standard workflow not to provide an in depth examination of model building techniques.  
+   
+   
 
-# Preliminaries  
-```{r echo=F}
+# Preliminaries   
+**Load needed packages**
+```{r echo=FALSE, warning=FALSE}
 #comments and prompts
 options(dplyr.summarise.inform = FALSE)
 library(cli)
@@ -51,10 +54,14 @@ library(censusapi)
 
 #inference
 library(INLA)
+#Not available on CRAN
+#install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
+
 library(EpiEstim)
 library(forecast)
 ```
 
+[**CovidCAR**](https://github.com/JMHumphreys/CovidCAR) currently on GitHub  
 ```{r}
 library(CovidCAR)
 ```
@@ -62,63 +69,81 @@ library(CovidCAR)
 # Setup Analysis 
 
 ## Specifiy Dates and Directories 
-The *setup_analysis()* function defines key date thresholds for model training and forecast horizon periods and should always be run before using any other functions in the *CovidCAR* package.  The dates are used by other functions to retrieve Covid19 observations (daily hospital incidence) and define points in model the response variable to shift from generating fitted estimates to producing forecast.  The model also allow for recording directory paths to (optionally) pull previously cached data and write pipeline outputs.  
+The *setup_analysis()* function defines key date thresholds for model training and forecast horizon periods and should always be run before using any other functions in the **CovidCAR** package.  The dates are written to a yaml file for use by other functions; for example, to retrieve Covid19 observations (daily hospital incidence) and to define time points in model the response variable to shift from generating fitted estimates to producing forecasts.   
+  
+The function also allows for recording directory paths to (optionally) write outputs outside of the working directory or to pull previously cached observation data (cache as created with **Covid19Forecast**.v1).  
 ```{r}
 setup_analysis(report_date = "2021-08-23", #report date, first forecast day
                training_period = 2*28, #days
                forecast_horizon = 28, #days
-               output_dir = "C:/Users/unp7/Desktop/Misc/test_CovidCAR", #sub directories and outputs written here
-               local_cache_dir = "C:/Users/unp7/Desktop/GitHub/covid19Forecasts/local/cache" #if available
+               output_dir = "C:/Users/unp7/Desktop/Misc/test_CovidCAR", #write outputs here
+               local_cache_dir = "C:/Users/unp7/Desktop/GitHub/covid19Forecasts/local/cache" #cache
 )
 ```
 
 ## Define Spatial Domain
-The *download_boundaries()* function
+The *download_boundaries()* function pulls US State and territorial boundaries (ESRI shapefiles) from sources in the public domain.  Some basic projection is performed, the shapefile is converted to a SpatialPolygonsDataFrame, and data attributes for a location identifier ('Region') and name ('State') are appended to the object.  
+  
+NOTE: The function includes an option to download county boundaries (unit="county") but there are some timeout issues that need to be resolved due to large file size.     
 ```{r}
 States <- download_boundaries(unit = "state")
+class(States)
+head(States@data[,c("Region", "State")]) #appended attributes  
 ```
 
 ## Adjacency Graph
-The *get_neighbors()* function
-```{r}
+The *get_neighbors()* function is used to identify polygons (States and Territories in this example) that are located next to each other.  Neighbor information is recorded in a matrix (dimensions: location*location) that is included with the CAR model.  Estimates for any one location are then 'conditional' on the estimates for surrounding locations.   
+   
+NOTE: Polygons representing locations such as Hawaii and Guam are isolated from other (termed 'islands') and can be problematic.  One option in this situation is to force connections between islands and other locations; the function's 'connect' option will force connections between islands and other loactions based on proximity.   
+   
+**Example: Islands with "no links"** 
+```{r warning=FALSE}
 nb_islands = get_neighbors(States, connect=FALSE)
-summary(nb_islands)
-
+summary(nb_islands) #note that "7 regions with no links"
+```
+  
+**Example: All loactions linked**   
+```{r warning=FALSE}
 nb_coerced = get_neighbors(States, connect=TRUE)
 summary(nb_coerced)
 ```
 
-View mapped adjacency  
-The *plot_neighbors()* function
+**View mapped adjacency**  
+The *plot_neighbors()* function overlays adjacency connections on mapped location boundaries.    
 ```{r}
 plot_neighbors(States, nb_islands)
 
 plot_neighbors(States, nb_coerced)
 ```
 
-Convert to INLA Graph
-The *nb2INLA()* and *inla.read.graph()* functions
+**Convert to INLA Graph**
+The *nb2INLA()* and *inla.read.graph()* functions are provided by the **INLA** package.  
 ```{r}
 nb2INLA("J", nb_coerced)
 J = inla.read.graph("J")
 ```
 
 # Retrieve Observation Data
-The *get_covid19_obs()* function
+The *get_covid19_obs()* function downloads hospital incidence data between a specified data range.  
+  
+#### The *source* options all data to be retrieved from:
++ The **covidcast** package  
++ From a local *cache* as created by the **covid19Forecasts** package (i.e., refactored pipeline pkg)  
++ From *test* data available from the package itself (sample from summer 2021)     
 ```{r}
 MinDate = min(full_time_span)
 MaxDate = max(full_time_span)
 
-#testData = get_covid19_obs(source = "cache", start_date = MinDate, end_date = MaxDate)
 testData = get_covid19_obs(source = "covidcast", start_date = MinDate, end_date = MaxDate)
-
+#testData = get_covid19_obs(source = "cache", start_date = MinDate, end_date = MaxDate)
 #testData = get_covid19_obs(source = "test", start_date = MinDate, end_date = MaxDate)
+
 dim(testData)
 head(testData)
 ```
 
-Add Spatial Index  
-The *append_region_index()* function
+**Add Spatial Index**  
+The *append_region_index()* function matches location names in the observation data to the *Region* index in the polygon boundaries object, which also corresponds with the adjaceny matrix.  The Region index is added as a column to the observations as is a new **trn_tst** column that is coded with either a **trn** or **tst** nominal indicator to distinguish time periods used for model training (observed) and testing (not observed).       
 ```{r}
 train_data = append_region_index(train_data = testData, polys = States)
 which(is.na(train_data$Region))
