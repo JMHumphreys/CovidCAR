@@ -3,8 +3,6 @@
 #' This function creates a forecast template for the given dataset where the output includes all unique locations from the input data and the specified forecast horizon.
 #'
 #' @param train_data Input data used to create the forecast template.
-#' @param forecast_horiz_start Start date of the forecast horizon.
-#' @param forecast_horiz_end End date of the forecast horizon.
 #'
 #' @return Returns a data frame containing the forecast template.
 #' The output has the following columns: \code{location}, \code{date}, \code{value}, \code{signal}, \code{day}, and \code{trn_tst}.
@@ -38,7 +36,7 @@
 #' @importFrom dplyr select distinct left_join
 #' @importFrom lubridate as_date weekdays
 #' @export
-create_forecast_template <- function(train_data, forecast_horiz_start, forecast_horiz_end) {
+create_forecast_template <- function(train_data) {
 
   if(class(forecast_horiz_start) != "Date"){
     cli_abort("Run setup_analysis() to designate key analysis dates before proceeding")}

@@ -4,14 +4,14 @@
 \alias{append_region_index}
 \title{Extract Region Index from Spatial Object and Partition Training and Testing Data}
 \usage{
-append_region_index(train_data, polys, train_end_date)
+append_region_index(train_data, polys)
 }
 \arguments{
 \item{train_data}{A data frame containing training data.}
 
-\item{train_end_date}{A Date object till which we want to keep the data for training purposes.}
-
 \item{States}{Shapefile object containing state boundaries and regions.}
+
+\item{train_end_date}{A Date object till which we want to keep the data for training purposes.}
 }
 \value{
 Returns the modified train_data dataframe with new columns: day, trn_tst, and Region.

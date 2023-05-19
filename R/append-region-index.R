@@ -14,7 +14,7 @@
 #' append_region_index(train_df, states_sf, as.Date("2020-12-31"))
 #'
 #' @export
-append_region_index <- function(train_data, polys, train_end_date) {
+append_region_index <- function(train_data, polys) {
 
   if(class(train_end_date) != "Date"){
     cli_abort("Run setup_analysis() to designate key analysis dates before proceeding")}

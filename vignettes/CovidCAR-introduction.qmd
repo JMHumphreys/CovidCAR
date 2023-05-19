@@ -1,0 +1,514 @@
+---
+title: "A brief overview of the CovidCAR Package"
+date: "2023-05-18"
+description: "CovidCAR is intended to facilitate Covid19 model building, ensembling, and evalutaion"
+format:
+  html:
+    df-print: kable
+    code-fold: show
+    code-summary: "Hide code"
+    code-overflow: wrap
+    toc-title: Page Contents
+    toc: true
+    toc-depth: 2
+    number-sections: false
+    html-math-method: katex
+    css: styles.css
+    theme: flatly
+    toc-location: left
+    smooth-scroll: true
+editor_options: 
+  chunk_output_type: console
+---
+
+# Tutorial Overview
+This tutorial briefly outlines core functions used to preprocess observation data, build spatial-temporal models, and post-process model outputs.  Its purpose is to demonstrate a standard workflow not to provide an in depth examination of model building techniques.   
+
+# Preliminaries  
+```{r echo=F}
+#comments and prompts
+options(dplyr.summarise.inform = FALSE)
+library(cli)
+
+
+#wrangling
+library(tidyverse)
+library(lubridate)
+library(arrow)
+library(Hmisc)
+
+#spatial manipulation
+library(sp)
+library(sf)
+library(spdep)
+library(rgeos)
+library(igraph)
+library(maptools)
+library(mapproj)
+
+#census data
+library(censusapi)
+
+#inference
+library(INLA)
+library(EpiEstim)
+library(forecast)
+```
+
+```{r}
+library(CovidCAR)
+```
+
+# Setup Analysis 
+
+## Specifiy Dates and Directories 
+The *setup_analysis()* function defines key date thresholds for model training and forecast horizon periods and should always be run before using any other functions in the *CovidCAR* package.  The dates are used by other functions to retrieve Covid19 observations (daily hospital incidence) and define points in model the response variable to shift from generating fitted estimates to producing forecast.  The model also allow for recording directory paths to (optionally) pull previously cached data and write pipeline outputs.  
+```{r}
+setup_analysis(report_date = "2021-08-23", #report date, first forecast day
+               training_period = 2*28, #days
+               forecast_horizon = 28, #days
+               output_dir = "C:/Users/unp7/Desktop/Misc/test_CovidCAR", #sub directories and outputs written here
+               local_cache_dir = "C:/Users/unp7/Desktop/GitHub/covid19Forecasts/local/cache" #if available
+)
+```
+
+## Define Spatial Domain
+The *download_boundaries()* function
+```{r}
+States <- download_boundaries(unit = "state")
+```
+
+## Adjacency Graph
+The *get_neighbors()* function
+```{r}
+nb_islands = get_neighbors(States, connect=FALSE)
+summary(nb_islands)
+
+nb_coerced = get_neighbors(States, connect=TRUE)
+summary(nb_coerced)
+```
+
+View mapped adjacency  
+The *plot_neighbors()* function
+```{r}
+plot_neighbors(States, nb_islands)
+
+plot_neighbors(States, nb_coerced)
+```
+
+Convert to INLA Graph
+The *nb2INLA()* and *inla.read.graph()* functions
+```{r}
+nb2INLA("J", nb_coerced)
+J = inla.read.graph("J")
+```
+
+# Retrieve Observation Data
+The *get_covid19_obs()* function
+```{r}
+MinDate = min(full_time_span)
+MaxDate = max(full_time_span)
+
+#testData = get_covid19_obs(source = "cache", start_date = MinDate, end_date = MaxDate)
+testData = get_covid19_obs(source = "covidcast", start_date = MinDate, end_date = MaxDate)
+
+#testData = get_covid19_obs(source = "test", start_date = MinDate, end_date = MaxDate)
+dim(testData)
+head(testData)
+```
+
+Add Spatial Index  
+The *append_region_index()* function
+```{r}
+train_data = append_region_index(train_data = testData, polys = States)
+which(is.na(train_data$Region))
+```
+
+
+# Forecast Template
+The *create_forecast_template()* function
+```{r}
+train_data = create_forecast_template(train_data)
+```
+
+# Additional Covariates 
+
+## Demographic Data
+The *getPovertyPop()* function provides a wrapper function for the [**getCensus** package](https://centeronbudget.github.io/getcensus/) for loading American Community Survey (ACS) data from the U.S. Census Bureau.  
+```{r echo=FALSE}
+secret_api = "51074e4f14daf997bb47f6ccf553a05f38e6ccb9"
+```
+```{r}
+PovPop_data = getPovertyPop(key=secret_api, 
+                            vars_pov = c("SAEPOVRTALL_PT"), 
+                            vars_pop = c('AGEGROUP','POP'), filt_age = c(12,18))
+
+
+train_data = left_join(train_data, PovPop_data, by = "location")
+```
+
+## Rt Estimation
+The *Rt_projection()* function combines the *estimate_R()* function from the [**EpiEstim** package](https://github.com/mrc-ide/EpiEstim) with simple timeseries models (options to use the **forecast** or **INLA** packages) to forecast Rt estimated over the model training period over the forecast horizon (28 days in the future).  This is just an experimental function.  Rather than using forecasted Rt from these runs, models later in this flow will forecast Rt concurrently with hospital incidence (the principal target in this analysis).
+```{r}
+Rt_df = Rt_projection(train_data, mean_si = 5.7, std_si = 2, forecast_horizon = 28, method = "dlm")
+
+head(Rt_df)
+```
+
+
+# Organize Data  
+
+## Clean Dataframe 
+The *time_index()* function 
+```{r}
+train_data <- as.data.frame(Rt_df) %>%
+  mutate(
+    s_pop = log(age_pop),
+    s_pov = as.numeric(scale(SAEPOVRTALL_PT)),
+    doy = as.integer(as.factor(date)),
+    doy.1 = doy,
+    Region.Wk = paste0("ID", Region, "W", doy),
+    ID.Region.Wk = as.integer(as.factor(Region.Wk)),
+    week = week(date),
+    int_week.1 = as.integer(as.factor(week)),
+    int_week.2 = int_week.1,
+    int_week.3 = int_week.1,
+    threeday_indx = time_index(date, seq(min(date), max(date), by = "3 days")),
+    threeday_indx.1 = as.integer(as.factor(threeday_indx)),
+    fourday_indx = time_index(date, seq(min(date), max(date), by = "4 days")),
+    fourday_indx.1 = as.integer(as.factor(fourday_indx)),
+    fiveday_indx = time_index(date, seq(min(date), max(date), by = "5 days")),
+    fiveday_indx.1 = as.integer(as.factor(fiveday_indx)),
+    eightday_indx = time_index(date, seq(min(date), max(date), by = "8 days")),
+    eightday_indx.1 = as.integer(as.factor(eightday_indx)),
+    biweek_indx = time_index(date, seq(min(date), max(date), by = "14 days")),
+    biweek_indx.1 = as.integer(as.factor(biweek_indx)),
+    Region.1 = Region, Region.2 = Region, Region.3 = Region, 
+                Region.4 = Region, Region.5 = Region
+  ) %>%
+  select(c(-biweek_indx, threeday_indx, fourday_indx, fiveday_indx, eightday_indx))
+
+head(train_data)
+
+```
+
+## Code Respone Variable
+```{r}
+train_data$resp = ifelse(train_data$trn_tst == "train", train_data$value, NA) #Set obs value to NA for forecasts periods
+
+resp_scale_obj = scale(train_data$resp, scale=T, center=T) #scaled object
+obs_scale = function(r)r*attr(resp_scale_obj,'scaled:scale') + attr(resp_scale_obj, 'scaled:center') #transform back to observation scale
+
+train_data$nrm_resp = as.numeric(resp_scale_obj)
+```
+
+## Format as a Datastack
+```{r}
+nrm.lst = list(list(intercept1 = rep(1, dim(train_data)[1])),
+          list(pov_pct = train_data[,"s_pov"],
+               pop = train_data[,"s_pop"],
+               Rt_raw = train_data[,"Rt_raw"],
+               Rt_raw.1 = train_data[,"Rt_raw"],
+               Rt = train_data[,"Rt"],
+               Rt.1 = train_data[,"Rt"],
+               doy = train_data[,"doy"],
+               doy.1 = train_data[,"doy.1"],
+               doy.2 = train_data[,"doy.1"],
+               int_week.1 = train_data[,"int_week.1"],
+               int_week.2 = train_data[,"int_week.2"],
+               int_week.3 = train_data[,"int_week.3"],
+               threeday_indx.1 = train_data[,"threeday_indx.1"],
+               fourday_indx.1 = train_data[,"fourday_indx.1"],
+               fiveday_indx.1 = train_data[,"fiveday_indx.1"],
+               eightday_indx.1 = train_data[,"eightday_indx.1"],
+               biwek_indx.1 = train_data[,"biweek_indx.1"],
+               Region.1 = train_data[,"Region.1"],
+               Region.2 = train_data[,"Region.2"],
+               Region.3 = train_data[,"Region.3"],
+               Region.4 = train_data[,"Region.4"],
+               Region.5 = train_data[,"Region.5"],
+               Region_Wk = train_data[,"ID.Region.Wk"],
+               dow = train_data[,"day"]))
+
+nrm.stk = inla.stack(data = list(Y = train_data$nrm_resp), 
+                                      A = list(1,1), 
+                                effects = nrm.lst,   
+                                    tag = "nrm")
+```
+
+
+# Model Priors and Forumulae
+## Set Priors
+```{r}
+#bym prior
+bym_hyper <- list(phi = list(prior = "pc", 
+                      param = c(0.5, 2/3), 
+                      initial = 3), 
+               prec = list(prior = "pc.prec", 
+                       param = c(1, 0.01), 
+                       initial = 1.5))  
+#Normal prior
+norm.prior <- list(theta=list(prior = "normal", param=c(0, 1)))
+
+
+#iid prior
+pc_prec_iid <- list(theta = list(prior="pc.prec", param=c(0.5, 0.01)))
+
+#ar1 prior
+pc_cor_ar1 <- list(theta = list(prior = 'pccor1', param = c(0.5, 0.9)))
+
+#rw2 prior
+pc_rw2 <- list(prec=list(prior="pc.prec", param=c(0.5,0.01)))
+
+#bundle priors to archive run
+priors.list <- list()
+priors.list[["bym_hyper"]] <- bym_hyper
+priors.list[["norm.prior"]] <- norm.prior
+priors.list[["pc_prec_iid"]] <- pc_prec_iid
+priors.list[["pc_cor_ar1"]] <- pc_cor_ar1
+priors.list[["pc_rw2"]] <- pc_rw2
+```
+
+## Specify Formulas
+Formula 1: Random Walk plus noise for each location (i.e., state)  
+```{r}
+Frm.1 = Y ~ -1 +     #remove default intercept
+  intercept1 +       #custom intercept
+  f(doy.1,           #order by time index (daily)
+    constr=TRUE,     #enforced zero mean
+    model="rw1",     #order-1 random walk with noise
+    scale.model = TRUE, #additional internal scaling
+    group = Region.1, #run rw1 model for groups based on location 
+    control.group=list(model="iid"), #groups are treated independently
+    hyper=pc_rw2)  #prior for rw2
+```
+
+Formula 2: Random Walk plus noise and trend for each location 
+```{r}
+Frm.2 = Y ~ -1 +     
+  intercept1 +       
+  f(doy.1,           
+    constr=TRUE,     
+    model="rw1",    
+    scale.model = TRUE, 
+    group = Region.1, 
+    control.group=list(model="iid"), 
+    hyper=pc_rw2) + 
+  f(doy.2, model="linear", mean.linear = 0, prec.linear = 0.001) #add linear trend to rw1
+```
+
+Formula 3: Common spatial effect for timesteps but each location has separate autoregression 
+```{r}
+Frm.3 = Y ~ -1 +    
+  intercept1 +       
+  f(Region.1,        #location index
+    model="bym2",    #spatial effect, Besag-York-Mollie model (the 2 indicates scaling) 
+    graph=J,         #Adjacency graph to identify neighbors
+    constr=TRUE,     #enforced zero mean
+    hyper=bym_hyper) + #BYM prior
+  f(doy.1,             #order by time index (daily)
+    model="ar1",       #apply order-1 autoregressive
+    constr=TRUE,
+    group = Region.1,  #run ar1 model for groups based on location
+    control.group=list(model="iid"), #groups are treated independently
+    hyper=pc_cor_ar1) 
+```
+
+Formula 4: Separate spatial effects for timesteps (realted by ar1) and each location has its own autoregressive timetrend 
+```{r}
+Frm.4 = Y ~ -1 +     
+  intercept1 +       
+  f(Region.1,        
+    model="bym2",   
+    graph=J,         
+    constr=TRUE,     
+    group = doy,     #time index, daily (create separate realizations of spatial covariate for each day)
+    control.group=list(model="ar1"), #groups are related via an order-1 autoregressive
+    hyper=bym_hyper) + #prior for BYM
+  f(doy.1,             
+    model="ar1",       
+    constr=TRUE,
+    group = Region.1,  
+    control.group=list(model="iid"), 
+    hyper=pc_cor_ar1) 
+```
+
+Formula 5: As Formula 4 but with space-time interaction to capture location and time specific variation outside of modeled trends.  
+```{r}
+Frm.5 = Y ~ -1 +    
+  intercept1 +       
+  f(Region.1,        
+    model="bym2",    
+    graph=J,         
+    constr=TRUE,    
+    group = doy,     
+    control.group=list(model="ar1"),
+    hyper=bym_hyper) +
+  f(doy.1,             
+    model="ar1",       
+    constr=TRUE,
+    group = Region.1,  
+    control.group=list(model="iid"), 
+    hyper=pc_cor_ar1) +
+  f(Region_Wk,   #Index for all location*time combinations (space-time interaction)
+    model="iid", #each location and time combination considered independently
+    constr=TRUE,
+    hyper=pc_prec_iid) 
+```
+
+Formula 6: As Formula 5 but adding covariate for variation due to day of week (e.g. Monday, Tuesday,...Sunday).  
+```{r}
+Frm.6 = Y ~ -1 +    
+  intercept1 +       
+  f(Region.1,        
+    model="bym2",    
+    graph=J,         
+    constr=TRUE,     
+    group = doy,     
+    hyper=bym_hyper, 
+    control.group=list(model="ar1")) +
+  f(doy.1,             
+    model="ar1",       
+    constr=TRUE,
+    group = Region.1,  
+    control.group=list(model="iid"), 
+    hyper=pc_cor_ar1) +
+  f(dow,           #discrete variable indicating day of week, e.g. Monday, Tuesday,...Sunday
+    constr=TRUE,
+    model="iid",   #days of week may vary independently
+    group = Region.2, #variation attributed to days of week may differ by location
+    control.group=list(model="iid"), 
+    hyper=pc_prec_iid) +
+  f(Region_Wk,   
+    model="iid", 
+    constr=TRUE,
+    hyper=pc_prec_iid) 
+```
+
+Formula 7: Including Rt estimates as an experimental covariate.  Forecast Rt trend using an autoregressive model.
+```{r}
+Frm.7 = Y ~ -1 +     
+  intercept1 +       
+  pov_pct + pop +    
+  f(Region.1,        
+    model="bym2",    
+    graph=J,        
+    constr=TRUE,     
+    group = doy,     
+    hyper=bym_hyper, 
+    control.group=list(model="ar1")) + 
+  f(doy.1, Rt_raw,  #order by time index (daily) but weight each timestep by corresponding Rt_raw estimate
+    model="ar1",    #apply order-1 autoregressive to Rt weighted time index above
+    constr=TRUE,
+    group = Region.2, 
+    control.group=list(model="iid"),
+    hyper=pc_cor_ar1) +
+  f(dow,           
+    constr=TRUE,
+    model="iid",
+    group = Region.3,
+    control.group=list(model="iid"),
+    hyper=pc_prec_iid) +
+  f(Region_Wk,   
+    model="iid", 
+    constr=TRUE,
+    hyper=pc_prec_iid) 
+```
+
+Formula 8
+```{r}
+Frm.8 = Y ~ -1 +     
+  intercept1 +       
+  pov_pct + pop +    #linear covariates for poverty and population over 55yrs
+  f(Region.1,        
+    model="bym2",    
+    graph=J,        
+    constr=TRUE,     
+    group = doy,    
+    hyper=bym_hyper, 
+    control.group=list(model="ar1")) + 
+  f(threeday_indx.1, #time index, 3days
+    constr=TRUE,
+    model="rw2",     #order-2 random walk with noise
+    scale.model = TRUE,
+    group = Region.2,
+    control.group=list(model="iid"), 
+    hyper=pc_rw2) + 
+  f(doy.1, Rt_raw,  
+    model="ar1",    
+    constr=TRUE,
+    group = Region.3, 
+    control.group=list(model="iid"),
+    hyper=pc_cor_ar1) +
+  f(dow,           
+    constr=TRUE,
+    model="iid",
+    group = Region.4,
+    control.group=list(model="iid"),
+    hyper=pc_prec_iid) +
+  f(Region_Wk,   
+    model="iid", 
+    constr=TRUE,
+    hyper=pc_prec_iid) 
+```
+
+Organize Formulas
+```{r}
+formulas.list <- list()
+formulas.list[["base_rw1"]] <- Frm.1
+formulas.list[["rw1_trend"]] <- Frm.2
+formulas.list[["base_car"]] <- Frm.3
+formulas.list[["car_time"]] <- Frm.4
+formulas.list[["car_sti"]] <- Frm.5
+formulas.list[["car_wdays"]] <- Frm.6
+formulas.list[["car_rt"]] <- Frm.7
+formulas.list[["car_full"]] <- Frm.8
+```
+
+# Run Models
+The *run_model_list()* function
+```{r}
+formulas.list = formulas.list[c(1:4)] #short list for demo, fast run models
+
+models_out = run_model_list(formulas.list=formulas.list,
+                            dataStack=nrm.stk,
+                            likelihood = "gaussian",
+                            config=FALSE, verbose = FALSE)
+```
+
+# Extract and Format Forecasts
+The *extract_forecasts()* function pulls forecasts from models and saves them to *forecasts* analysis directory.  Returns *forecast_paths* object with vector of path names.
+```{r}
+extract_forecasts(mod_out=models_out,
+                  dataStack=nrm.stk, train_data=train_data)
+```
+
+
+# Examine Results
+```{r}
+forecast2 = read.csv(forecast_paths[2])
+
+head(forecast2)
+```
+
+## Simple Plots
+
+## WIS Scoring
+
+# Ensemble
+## Historic Forecasts
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

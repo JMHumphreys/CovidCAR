@@ -4,14 +4,10 @@
 \alias{create_forecast_template}
 \title{Create a Forecast Template}
 \usage{
-create_forecast_template(train_data, forecast_horiz_start, forecast_horiz_end)
+create_forecast_template(train_data)
 }
 \arguments{
 \item{train_data}{Input data used to create the forecast template.}
-
-\item{forecast_horiz_start}{Start date of the forecast horizon.}
-
-\item{forecast_horiz_end}{End date of the forecast horizon.}
 }
 \value{
 Returns a data frame containing the forecast template.

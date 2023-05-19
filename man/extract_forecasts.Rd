@@ -4,18 +4,14 @@
 \alias{extract_forecasts}
 \title{Extract forecasts from a model}
 \usage{
-extract_forecasts(nrm.stk, mod_out, train_data, return_quants, forecast_date)
+extract_forecasts(mod_out, dataStack, train_data)
 }
 \arguments{
-\item{nrm.stk}{An object of class 'inla.stack'}
-
 \item{mod_out}{The fitted model object}
 
 \item{train_data}{The training data used to fit the model}
 
-\item{return_quants}{A vector specifying the quantiles to extract}
-
-\item{forecast_date}{The forecast report date}
+\item{nrm.stk}{An object of class 'inla.stack'}
 }
 \value{
 A data frame with columns for the forecast date, location, target,
