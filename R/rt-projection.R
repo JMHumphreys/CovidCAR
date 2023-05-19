@@ -33,7 +33,10 @@
 #'                         method = "dlm")
 #'
 #' @export
-Rt_projection <- function(train_data, forecast_horiz_start, forecast_horiz_end, mean_si = 5.7, std_si = 2, forecast_horizon = 28, method = c("arima", "dlm")) {
+Rt_projection <- function(train_data, mean_si = 5.7, std_si = 2, forecast_horizon = 28, method = c("arima", "dlm")) {
+
+  if(class(forecast_horiz_start) != "Date"){
+    cli_abort("Run setup_analysis() to designate key analysis dates before proceeding")}
 
   locs_loop <- unique(train_data$location_name)
   Rt_df <- NULL # initialize output
@@ -98,6 +101,7 @@ Rt_projection <- function(train_data, forecast_horiz_start, forecast_horiz_end, 
     }
 
     Rt_df <- bind_rows(Rt_df, tmp.frame)
+    cli_alert_success("{paste0(locs_loop[i])} completed!")
 
 
   }

@@ -8,7 +8,7 @@ get_covid19_obs(
   source = c("covidcast", "cache", "test"),
   start_date,
   end_date,
-  cache_dir = NULL
+  write_copy = TRUE
 )
 }
 \arguments{
@@ -17,8 +17,6 @@ get_covid19_obs(
 \item{start_date}{A character string in the format "YYYY-MM-DD" indicating the start date for the data to be obtained.}
 
 \item{end_date}{A character string in the format "YYYY-MM-DD" indicating the end date for the data to be obtained.}
-
-\item{cache_dir}{A character string indicating the location of the local cache directory. Defaults to NULL.}
 }
 \value{
 Data frame containing COVID-19 observed data.

@@ -16,6 +16,9 @@
 #' @export
 append_region_index <- function(train_data, polys, train_end_date) {
 
+  if(class(train_end_date) != "Date"){
+    cli_abort("Run setup_analysis() to designate key analysis dates before proceeding")}
+
   Regions_data <- polys@data
 
   idx <- match(train_data$location_name, Regions_data$name)

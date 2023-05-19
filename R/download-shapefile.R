@@ -2,7 +2,6 @@
 #'
 #' Downloads and extracts shapefiles for either US states or counties. It creates a directory in the specified location if one does not exist already. The function downloads the shapefile from the specified URL, unzips it, reads it into an object of class 'sf', changes its projection to that of "EPSG:5070", fixes topology, matches state name with observation data and assigns unique identifiers.
 #'
-#' @param output_dir Path to the output directory where you want the shapefile to be saved, defaults to working directory.
 #' @param unit A character string indicating whether to download state or county borders, default is "state".
 #' @param proj Projection for the shapefiles, defaults to "EPSG:5070".
 #' @return An object of class 'SpatialPolygonsDataFrame' which contains the state or county border polygons and their associated attributes.
@@ -22,10 +21,10 @@
 #' @importFrom sf st_read st_transform st_make_valid
 #' @importFrom stats as nrow
 #' @export
-download_boundaries <- function(output_dir, unit = "state", proj = "EPSG:5070") {
+download_boundaries <- function(unit = "state", proj = "EPSG:5070") {
 
   # Create output directory if it does not exist
-  dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
+  dir.create(paste0(out_dir_name,"/polygons"), recursive = TRUE, showWarnings = FALSE)
 
   # Specify URL
   url_county <- "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/us-county-boundaries/exports/shp?lang=en&timezone=America%2FDenver"
@@ -38,6 +37,7 @@ download_boundaries <- function(output_dir, unit = "state", proj = "EPSG:5070") 
   layer_name <- ifelse(unit == "county", layer_name_county, layer_name_state)
 
   # Download and extract shapefiles to output directory
+  cli_alert("Downloading polygon files...")
   temp_zip <- tempfile(fileext = ".zip")
 
   tryCatch({
@@ -47,11 +47,11 @@ download_boundaries <- function(output_dir, unit = "state", proj = "EPSG:5070") 
     stop(e)
   })
 
-  unzip(temp_zip, exdir = output_dir)
+  unzip(temp_zip, exdir = paste0(out_dir_name,"/polygons"))
   file.remove(temp_zip)
 
   # Read shapefiles into sf object
-  polygons <- st_read(dsn = output_dir, layer = layer_name)
+  polygons <- st_read(dsn = paste0(out_dir_name,"/polygons"), layer = layer_name)
 
   # Project and fix topology
   polygons <- st_transform(polygons, crs = proj)

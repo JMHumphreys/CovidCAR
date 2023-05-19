@@ -6,8 +6,6 @@
 \usage{
 Rt_projection(
   train_data,
-  forecast_horiz_start,
-  forecast_horiz_end,
   mean_si = 5.7,
   std_si = 2,
   forecast_horizon = 28,
@@ -17,10 +15,6 @@ Rt_projection(
 \arguments{
 \item{train_data}{A dataframe with columns for date, location_name, and value, where value is a numeric vector representing the number of new cases or incidences for that day and location.}
 
-\item{forecast_horiz_start}{A date string representing the start of the time period to project Rt values for.}
-
-\item{forecast_horiz_end}{A date string representing the end of the time period to project Rt values for.}
-
 \item{mean_si}{A numeric value representing the mean serial interval for the disease being modeled. Default is 5.7.}
 
 \item{std_si}{A numeric value representing the standard deviation of the serial interval for the disease being modeled. Default is 2.}
@@ -28,6 +22,10 @@ Rt_projection(
 \item{forecast_horizon}{a positive integer specifying the number of periods to forecast}
 
 \item{method}{A character vector specifying the method to use for projecting Rt values. Valid options are "arima" or "dlm". Default is "arima".}
+
+\item{forecast_horiz_start}{A date string representing the start of the time period to project Rt values for.}
+
+\item{forecast_horiz_end}{A date string representing the end of the time period to project Rt values for.}
 }
 \value{
 A dataframe with the same columns as `train_data`, plus an additional column `Rt` representing the projected reproductive rate for each day and location.

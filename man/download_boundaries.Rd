@@ -4,11 +4,9 @@
 \alias{download_boundaries}
 \title{Download US Boundaries}
 \usage{
-download_boundaries(output_dir, unit = "state", proj = "EPSG:5070")
+download_boundaries(unit = "state", proj = "EPSG:5070")
 }
 \arguments{
-\item{output_dir}{Path to the output directory where you want the shapefile to be saved, defaults to working directory.}
-
 \item{unit}{A character string indicating whether to download state or county borders, default is "state".}
 
 \item{proj}{Projection for the shapefiles, defaults to "EPSG:5070".}

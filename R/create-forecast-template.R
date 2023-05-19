@@ -39,6 +39,10 @@
 #' @importFrom lubridate as_date weekdays
 #' @export
 create_forecast_template <- function(train_data, forecast_horiz_start, forecast_horiz_end) {
+
+  if(class(forecast_horiz_start) != "Date"){
+    cli_abort("Run setup_analysis() to designate key analysis dates before proceeding")}
+
   unique_loc <- unique(train_data$location)
   len_loc <- length(unique_loc)
 
