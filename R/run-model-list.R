@@ -33,7 +33,6 @@ run_model_list <- function(formulas.list, dataStack, likelihood = "gaussian", co
   for(i in 1:length(formulas.list)){
 
     cli_alert("Running models ", names(formulas.list)[[i]])
-    cli_alert_success("Model {paste0(names(formulas.list)[[i]])} completed!")
 
     models_out[[i]] = inla(formulas.list[[i]], #model formula
                            data = inla.stack.data(dataStack), #data organized as a list
@@ -50,6 +49,7 @@ run_model_list <- function(formulas.list, dataStack, likelihood = "gaussian", co
                            control.compute = list(dic = F, cpo = F, waic = F, config=FALSE)) #comparison metrics
     #config=TRUE: retain GMRF representation for sampling
     cli_progress_done()
+    cli_alert_success("Model {paste0(names(formulas.list)[[i]])} completed!")
   }
 
 
@@ -65,7 +65,7 @@ run_model_list <- function(formulas.list, dataStack, likelihood = "gaussian", co
     num_files <- length(list.files(archive_name))
     archive_name <- paste0(archive_name, Sys.Date(), "-models-run-v", num_files,".RData")
 
-    save(list=c("models_out", "formulas.list", "dataStack", "train_data"),
+    save(list=c("models_out", "formulas.list", "priors.list", "dataStack", "train_data"),
          file=paste0(archive_name), version = 2)
   }
 
