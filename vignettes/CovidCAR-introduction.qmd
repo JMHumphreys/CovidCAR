@@ -39,6 +39,7 @@ library(tidyverse)
 library(lubridate)
 library(arrow)
 library(Hmisc)
+library(yaml)
 
 #spatial manipulation
 library(sp)
@@ -69,7 +70,7 @@ library(CovidCAR)
 # Setup Analysis 
 
 ## Specifiy Dates and Directories 
-The *setup_analysis()* function defines key date thresholds for model training and forecast horizon periods and should always be run before using any other functions in the **CovidCAR** package.  The dates are written to a yaml file for use by other functions; for example, to retrieve Covid19 observations (daily hospital incidence) and to define time points in model the response variable to shift from generating fitted estimates to producing forecasts.   
+The *setup_analysis()* function defines key date thresholds for model training and forecast horizon periods and should always be run before using any other functions in the **CovidCAR** package.  The dates are written to a yaml file for use by other functions.  
   
 The function also allows for recording directory paths to (optionally) write outputs outside of the working directory or to pull previously cached observation data (cache as created with **Covid19Forecast**.v1).  
 ```{r}
@@ -94,7 +95,7 @@ head(States@data[,c("Region", "State")]) #appended attributes
 ## Adjacency Graph
 The *get_neighbors()* function is used to identify polygons (States and Territories in this example) that are located next to each other.  Neighbor information is recorded in a matrix (dimensions: location*location) that is included with the CAR model.  Estimates for any one location are then 'conditional' on the estimates for surrounding locations.   
    
-NOTE: Polygons representing locations such as Hawaii and Guam are isolated from other (termed 'islands') and can be problematic.  One option in this situation is to force connections between islands and other locations; the function's 'connect' option will force connections between islands and other loactions based on proximity.   
+NOTE: Polygons representing locations such as Hawaii and Guam are isolated from other locations (termed 'islands') and can be problematic.  One option in this situation is to force connections between locations; the function's 'connect' option will force connections between islands and other locations based on proximity.   
    
 **Example: Islands with "no links"** 
 ```{r warning=FALSE}
@@ -102,7 +103,7 @@ nb_islands = get_neighbors(States, connect=FALSE)
 summary(nb_islands) #note that "7 regions with no links"
 ```
   
-**Example: All loactions linked**   
+**Example: All locations linked**   
 ```{r warning=FALSE}
 nb_coerced = get_neighbors(States, connect=TRUE)
 summary(nb_coerced)
@@ -124,9 +125,9 @@ J = inla.read.graph("J")
 ```
 
 # Retrieve Observation Data
-The *get_covid19_obs()* function downloads hospital incidence data between a specified data range.  
+The *get_covid19_obs()* function downloads hospital incidence data for a specified data range.  
   
-#### The *source* options all data to be retrieved from:
+#### The *source* options for data to be retrieved:
 + The **covidcast** package  
 + From a local *cache* as created by the **covid19Forecasts** package (i.e., refactored pipeline pkg)  
 + From *test* data available from the package itself (sample from summer 2021)     
@@ -151,15 +152,16 @@ which(is.na(train_data$Region))
 
 
 # Forecast Template
-The *create_forecast_template()* function
+The *create_forecast_template()* function ensures that each location-time combination in the analysis is represented in the data ingested by the model.  In the case of model runs using only historic observations, this function basically returns the original input but with some column names adjusted.  This because the full date range was already represented.  However, in the case of future dates where observations are not yet available, this function will add a row for each day through the forecast horizon coding the observed incidence *value* as NA as a placeholder.    
 ```{r}
 train_data = create_forecast_template(train_data)
 ```
 
-# Additional Covariates 
-
+# Additional Covariates   
+Demo models in this example are fairly simple but in many cases users will want to add additional predictors, signals, or covariates (independent variables).  This section of the script demonstrates how to (1) pull and add demographic variables from the American Community Survey (ACS) and how to (2) add Rt estimates generated from the **EpiEstim** package.    
+   
 ## Demographic Data
-The *getPovertyPop()* function provides a wrapper function for the [**getCensus** package](https://centeronbudget.github.io/getcensus/) for loading American Community Survey (ACS) data from the U.S. Census Bureau.  
+The *getPovertyPop()* function provides a wrapper function for the [**getCensus** package](https://centeronbudget.github.io/getcensus/) for loading American Community Survey (ACS) data from the U.S. Census Bureau.  In this example, an API key ('secret_api') is used to pull the percent of each state's total population in poverty (SAEPOVRTALL_PT) and the number of individuals over the age of 55yrs (given in the *vars_pop* option).  
 ```{r echo=FALSE}
 secret_api = "51074e4f14daf997bb47f6ccf553a05f38e6ccb9"
 ```
@@ -173,7 +175,13 @@ train_data = left_join(train_data, PovPop_data, by = "location")
 ```
 
 ## Rt Estimation
-The *Rt_projection()* function combines the *estimate_R()* function from the [**EpiEstim** package](https://github.com/mrc-ide/EpiEstim) with simple timeseries models (options to use the **forecast** or **INLA** packages) to forecast Rt estimated over the model training period over the forecast horizon (28 days in the future).  This is just an experimental function.  Rather than using forecasted Rt from these runs, models later in this flow will forecast Rt concurrently with hospital incidence (the principal target in this analysis).
+The *Rt_projection()* function combines the *estimate_R()* function from the [**EpiEstim** package](https://github.com/mrc-ide/EpiEstim) with simple timeseries models to forecast Rt estimated over the model training period across the forecast horizon (28 days in the future).  Both the 'raw' Rt estimate ('Rt_raw') for the observation period only and the forecast values ('Rt') are added to the dataframe.   
+  
+#### Forecast models include:
++ simple ARIMA model using the **forecast** package (method="arima")    
++ an order-2 random walk with noise and trend using the **INLA** package (method="dlm)
+
+NOTE: This is an experimental function and the "dlm" method is used as an example.  Models later in this demo will use the Rt_raw value to forecast concurrently with incidence estimation.   
 ```{r}
 Rt_df = Rt_projection(train_data, mean_si = 5.7, std_si = 2, forecast_horizon = 28, method = "dlm")
 
@@ -295,7 +303,7 @@ priors.list[["pc_rw2"]] <- pc_rw2
 ```
 
 ## Specify Formulas
-Formula 1: Random Walk plus noise for each location (i.e., state)  
+**Formula 1:** Random Walk plus noise for each location (i.e., state)  
 ```{r}
 Frm.1 = Y ~ -1 +     #remove default intercept
   intercept1 +       #custom intercept
@@ -308,7 +316,7 @@ Frm.1 = Y ~ -1 +     #remove default intercept
     hyper=pc_rw2)  #prior for rw2
 ```
 
-Formula 2: Random Walk plus noise and trend for each location 
+**Formula 2:** Random Walk plus noise and trend for each location 
 ```{r}
 Frm.2 = Y ~ -1 +     
   intercept1 +       
@@ -322,7 +330,7 @@ Frm.2 = Y ~ -1 +
   f(doy.2, model="linear", mean.linear = 0, prec.linear = 0.001) #add linear trend to rw1
 ```
 
-Formula 3: Common spatial effect for timesteps but each location has separate autoregression 
+**Formula 3:** Common spatial effect for timesteps but each location has separate autoregression 
 ```{r}
 Frm.3 = Y ~ -1 +    
   intercept1 +       
@@ -339,7 +347,7 @@ Frm.3 = Y ~ -1 +
     hyper=pc_cor_ar1) 
 ```
 
-Formula 4: Separate spatial effects for timesteps (realted by ar1) and each location has its own autoregressive timetrend 
+**Formula 4:** Separate spatial effect for each timestep (related by ar1) and each location has its own autoregressive term. 
 ```{r}
 Frm.4 = Y ~ -1 +     
   intercept1 +       
@@ -358,7 +366,7 @@ Frm.4 = Y ~ -1 +
     hyper=pc_cor_ar1) 
 ```
 
-Formula 5: As Formula 4 but with space-time interaction to capture location and time specific variation outside of modeled trends.  
+**Formula 5:** As Formula 4 but with space-time interaction to capture location and time specific variation outside of modeled trends.  
 ```{r}
 Frm.5 = Y ~ -1 +    
   intercept1 +       
@@ -381,7 +389,7 @@ Frm.5 = Y ~ -1 +
     hyper=pc_prec_iid) 
 ```
 
-Formula 6: As Formula 5 but adding covariate for variation due to day of week (e.g. Monday, Tuesday,...Sunday).  
+**Formula 6:** As Formula 5 but adding covariate for variation due to day of week (e.g. Monday, Tuesday,...Sunday).  
 ```{r}
 Frm.6 = Y ~ -1 +    
   intercept1 +       
@@ -410,7 +418,7 @@ Frm.6 = Y ~ -1 +
     hyper=pc_prec_iid) 
 ```
 
-Formula 7: Including Rt estimates as an experimental covariate.  Forecast Rt trend using an autoregressive model.
+**Formula 7:** Including Rt estimates as an experimental covariate.  Forecast Rt trend estimated from the observation period (trainin period) to the future (28 days) using an autoregressive model.
 ```{r}
 Frm.7 = Y ~ -1 +     
   intercept1 +       
@@ -440,7 +448,7 @@ Frm.7 = Y ~ -1 +
     hyper=pc_prec_iid) 
 ```
 
-Formula 8
+**Formula 8:** As with Formula 8 but adding a random walk at a more coarse time scale (3 day steps) to reduce forecast decay.   
 ```{r}
 Frm.8 = Y ~ -1 +     
   intercept1 +       
@@ -477,7 +485,7 @@ Frm.8 = Y ~ -1 +
     hyper=pc_prec_iid) 
 ```
 
-Organize Formulas
+**Organize Formulas**
 ```{r}
 formulas.list <- list()
 formulas.list[["base_rw1"]] <- Frm.1
