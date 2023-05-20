@@ -106,9 +106,9 @@ plot_WIS_lines <- function(scores_df, by = c("tile", "date"), range = c("abs","s
             plot.title = element_text(size=18, face="bold", hjust=0.5)) +
       guides(color = guide_legend(title.position = "top", label.position = "bottom"))
 
-   plot(base_line)
-
   }
+
+  plot(base_line)
 }
 
 

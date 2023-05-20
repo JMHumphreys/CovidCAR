@@ -593,11 +593,9 @@ unique(my_scores$model)
 
 plot_WIS_lines(my_scores, by = "date", range = "abs")
 
-plot_WIS_lines(my_scores, by = "date", range = "scaled", scale_model = "base_car")
+plot_WIS_lines(my_scores, by = "date", range = "scaled", scale_model = "base_rw1")
 
-plot_WIS_lines(my_scores, by = "location", range = "scaled", scale_model = "base_car")
-
-plot_WIS_lines(my_scores, by = "tile", range = "scaled", scale_model = "base_car")
+plot_WIS_lines(my_scores, by = "tile", range = "scaled", scale_model = "base_rw1")
 
 
 
