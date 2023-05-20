@@ -501,7 +501,7 @@ formulas.list[["car_full"]] <- Frm.8
 # Run Models
 The *run_model_list()* function
 ```{r}
-formulas.list = formulas.list[c(1:4)] #short list for demo, fast run models
+#formulas.list = formulas.list[c(1:4)] #short list for demo, fast run models
 
 models_out = run_model_list(formulas.list=formulas.list,
                             dataStack=nrm.stk,
