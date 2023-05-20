@@ -12,7 +12,7 @@
 #' applicable), and forecast value as required for submission to Covid19-forecast-hub.
 #'
 #' @export
-extract_forecasts <- function(mod_out, dataStack, train_data) {
+extract_forecasts <- function(mod_out, dataStack, train_data, team = "TeamName") {
 
   if(is.null(su_yaml$forecast_date) == TRUE){
     cli_abort("Run setup_analysis() to designate key analysis dates before proceeding")}
@@ -77,10 +77,13 @@ extract_forecasts <- function(mod_out, dataStack, train_data) {
     cli_progress_step("Writing model forecasts to analysis directory: ", names(mod_out)[i])
 
     # Write to .csv file in newly created directory
-    filename_loop <- paste0(fdir_name, "/", as_date(su_yaml$forecast_date), "-", names(mod_out)[i],"-","forecast",".csv")
+    filename_loop <- paste0(fdir_name, "/", as_date(su_yaml$forecast_date), "-", paste0(team), "-", names(mod_out)[i],".csv")
+    forecast_paths[[paste0(names(mod_out)[i])]] = filename_loop
     write.csv(getValues, file = paste0(filename_loop), row.names = FALSE)
   }
 
-  forecast_paths <<- list.files(fdir_name, pattern='csv', full.names = TRUE, recursive = TRUE,)
+  #forecast_paths <- list.files(fdir_name, pattern='csv', full.names = TRUE, recursive = TRUE)
+  #names(forecast_paths) = names(mod_out)
+  forecast_paths <<- forecast_paths
 
 }

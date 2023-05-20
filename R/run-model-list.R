@@ -57,7 +57,7 @@ run_model_list <- function(formulas.list, dataStack, likelihood = "gaussian", co
 
   if(archive == TRUE){
 
-    archive_name <- paste0(out_dir_name,"/run_archive/")
+    archive_name <- paste0(su_yaml$out_dir_name,"/run_archive/")
     if (!dir.exists(archive_name)) {
       dir.create(archive_name)
     }

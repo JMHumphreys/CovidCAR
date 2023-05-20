@@ -4,7 +4,7 @@
 \alias{extract_forecasts}
 \title{Extract forecasts from a model}
 \usage{
-extract_forecasts(mod_out, dataStack, train_data)
+extract_forecasts(mod_out, dataStack, train_data, team = "TeamName")
 }
 \arguments{
 \item{mod_out}{The fitted model object}
