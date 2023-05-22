@@ -33,7 +33,8 @@ propose_weights <- function(forecast_data, ingest = c("dataframe", "path", "list
     dropsies <- nrow(rank_df) - drop
     weights_tmp <- arrange(rank_df, rankCol)[1:dropsies,]
     cut_mods <- rank_df[(dropsies+1):nrow(rank_df),]$model
-    cli_alert(paste0("Dropped models: ", paste0(cut_mods)))
+    cli_alert("Dropped models: {paste0(cut_mods)}")
+
   } else{
 
     weights_tmp = arrange(rank_df, rankCol)

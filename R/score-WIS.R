@@ -62,7 +62,7 @@ score_WIS <- function(forecast_data, truth, ingest = c("dataframe", "path", "lis
   }
 
       #match to truth
-      truth_data <- truth_data %>%
+      truth_data <- truth %>%
         mutate(true_value = value,
                location_name = location) %>%
         select(date, location_name, true_value)

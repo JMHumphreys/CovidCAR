@@ -35,13 +35,17 @@ pre {
 
 
     
-# Tutorial Overview
-This tutorial briefly outlines core functions used to preprocess observation data, build spatial-temporal models, and post-process model outputs.  Its purpose is to demonstrate a standard workflow not to provide an in depth examination of functions or model building techniques.  
-   
-   
+# Overview
+This introduction briefly outlines core functions used to preprocess observation data, build spatial-temporal models, and post-process model outputs.  Its purpose is to demonstrate a standard workflow not to provide an in depth examination of functions or model building techniques.  
 
+## Resources  
++ [The CovidCAR GitHub page](https://github.com/JMHumphreys/CovidCAR)    
++ [CovidCAR Functions Reference site](https://jmhumphreys.github.io/CovidCAR/reference/index.html)  
+  
+  
 # Preliminaries   
-**Load needed packages**
+**Load needed packages**  
+A few of these packages are not available on CRAN and will need to be installed from other locations.  
 ```{r echo=TRUE, warning=FALSE, message=FALSE}
 #comments and prompts
 options(dplyr.summarise.inform = FALSE)
@@ -187,7 +191,7 @@ Demo models in this example are fairly simple but in many cases users will want 
 ## Demographic Data
 The *getPovertyPop()* function provides a wrapper function for the [**getCensus** package](https://centeronbudget.github.io/getcensus/) for loading American Community Survey (ACS) data from the U.S. Census Bureau.  In this example, an API key ('secret_api') is used to pull the percent of each state's total population in poverty (SAEPOVRTALL_PT) and the number of individuals over the age of 55yrs (given in the *vars_pop* option).  
 ```{r echo=FALSE}
-secret_api = "xxx"
+secret_api = "51074e4f14daf997bb47f6ccf553a05f38e6ccb9"
 ```
 ```{r}
 PovPop_data = getPovertyPop(key=secret_api, 
@@ -576,8 +580,6 @@ There are many customization options for inference but have opted to keep *run_m
 ```{r warning=FALSE, message=FALSE}
 formulas.list = formulas.list[c(1:4)] #short list for demo, fast run models
 
-#formulas.list = formulas.list[3]
-
 models_out = run_model_list(formulas.list=formulas.list,
                             dataStack=nrm.stk,
                             likelihood = "gaussian",
@@ -585,7 +587,9 @@ models_out = run_model_list(formulas.list=formulas.list,
 ```
 
 # Extract and Format Forecasts
-The *extract_forecasts()* function pulls forecasts from models and saves them to a *forecasts* folder in analysis directory.  The function also returns a *forecast_paths* list object to the environment with file path names.
+The *extract_forecasts()* function pulls forecasts from models and saves them to a *forecasts* folder in analysis directory.  The function also returns a *forecast_paths* list object to the environment with file path names.  
+  
+Forecasts are formatted to the specifications required for submission to the [covid19-forecast-hub](https://github.com/reichlab/covid19-forecast-hub).  
 ```{r}
 extract_forecasts(mod_out=models_out,
                   dataStack=nrm.stk, train_data=train_data,
@@ -599,19 +603,19 @@ head(read.csv(forecast_paths[["rw1_trend"]])) #formatted for submission
 
 # Model Scoring
 
-## Score Forecasts
+## WIS Scores  
 The *score_WIS()* function calculates the WIS score for forecasts by model.  Optional arguments can be included to indicate if files should be read from a directory (ingest = "path"), a dataframe in the environment (ingest = "dataframe"),or from a list object with individual file paths (ingest = "list") as returned by *extract_forecasts()*.
   
 The 'missing' option can be used to specify how missing observation data should be handled; 'remove' from data or fill with 'zero'.    
 ```{r}
-truth_data <- train_data %>%
+my_truth <- train_data %>%      #Caution: my_truth may be different than your truth :)
   select(date, location, value)
 
-my_scores <- score_WIS(forecast_data = forecast_paths, truth=truth_data, ingest = "list", missing = "remove") 
+my_scores <- score_WIS(forecast_data = forecast_paths, truth=my_truth, ingest = "list", missing = "remove") 
 
 #Example using ingest=path
 #my_dir = "C:/Users/unp7/Desktop/Misc/test_CovidCAR/2021-08-23-CovidCAR-run2023-05-20/forecasts"
-#my_scores = score_WIS(forecast_data = my_dir, truth=truth_data, ingest = "path") 
+#my_scores = score_WIS(forecast_data = my_dir, truth=my_truth, ingest = "path") 
 
 head(my_scores)
 
@@ -640,12 +644,16 @@ plot_WIS_lines(my_scores, by = "date", range = "scaled", scale_model = "base_rw1
 plot_WIS_lines(my_scores, by = "tile", range = "scaled", scale_model = "base_rw1", limit = 2)
 ```
 
+## Mean Absolute Error (MAE)  
+The *score_MAE()* function works comparably to *score_WIS()* but is a simpler measure of model performance as it is based on only the point estimates from forecasts.  
+```{r}
+my_mae <- score_MAE(forecast_data = forecast_paths, truth=my_truth, ingest = "list", missing = "remove") 
+my_mae
+```
 
 # Ensemble
 
 ```{r}
-my_mae <- score_MAE(forecast_data = forecast_paths, truth=truth_data, ingest = "list", missing = "remove") 
-
 mod_rank <- left_join(my_mae, wis_rank, by="model") #combine with overall WIS
 
 mod_rank
@@ -675,11 +683,11 @@ my_wis_weights
 
 ## Ensemble Re-scoring 
 ```{r}
-truth_data <- train_data %>%
+my_truth <- train_data %>%
   select(date, location, value)
 
 myDir <- "C:/Users/unp7/Desktop/Misc/test_CovidCAR/2021-08-23-CovidCAR-run2023-05-21/forecasts"
-new_mae <- score_MAE(forecast_data = myDir, truth=truth_data, ingest = "path", missing = "remove") 
+new_mae <- score_MAE(forecast_data = myDir, truth=my_truth, ingest = "path", missing = "remove") 
 new_mae
 ```
 

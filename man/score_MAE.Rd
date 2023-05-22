@@ -6,7 +6,7 @@
 \usage{
 score_MAE(
   forecast_data,
-  truth_data,
+  truth,
   ingest = c("dataframe", "path", "list"),
   missing = c("remove", "zero")
 )
@@ -14,7 +14,7 @@ score_MAE(
 \arguments{
 \item{forecast_data}{A dataframe, path or list object containing forecast information}
 
-\item{truth_data}{A dataframe containing true values to compare forecasts against}
+\item{truth}{A dataframe containing true values to compare forecasts against}
 
 \item{ingest}{Character value indicating how forecast data is being passed.
 Options are "dataframe", "path", or "list". Default is "dataframe".}
@@ -30,6 +30,6 @@ Returns a data frame with columns for Model, MAE, MAPE, and Rank, sorted by asce
 This function calculates the Mean Absolute Error (MAE) for a set of forecasts and corresponding true values.
 }
 \examples{
-score_MAE(forecast_data = my_forecasts, truth_data = my_truth, ingest = "dataframe", missing = "remove")
+score_MAE(forecast_data = my_forecasts, truth = my_truth, ingest = "dataframe", missing = "remove")
 
 }

@@ -3,7 +3,7 @@
 #' This function calculates the Mean Absolute Error (MAE) for a set of forecasts and corresponding true values.
 #'
 #' @param forecast_data A dataframe, path or list object containing forecast information
-#' @param truth_data A dataframe containing true values to compare forecasts against
+#' @param truth A dataframe containing true values to compare forecasts against
 #' @param ingest Character value indicating how forecast data is being passed.
 #' Options are "dataframe", "path", or "list". Default is "dataframe".
 #' @param missing Character value indicating how to handle missing or NaN values in the truth data.
@@ -14,9 +14,9 @@
 #' @export
 #'
 #' @examples
-#' score_MAE(forecast_data = my_forecasts, truth_data = my_truth, ingest = "dataframe", missing = "remove")
+#' score_MAE(forecast_data = my_forecasts, truth = my_truth, ingest = "dataframe", missing = "remove")
 #'
-score_MAE <- function(forecast_data, truth_data, ingest = c("dataframe", "path", "list"), missing = c("remove","zero")) {
+score_MAE <- function(forecast_data, truth, ingest = c("dataframe", "path", "list"), missing = c("remove","zero")) {
 
   if (ingest == "path" & is.character(forecast_data)) {
     fnames <- list.files(forecast_data, pattern='csv', full.names = TRUE, recursive = TRUE)
@@ -60,7 +60,7 @@ score_MAE <- function(forecast_data, truth_data, ingest = c("dataframe", "path",
   }
 
   #match to truth
-  truth_data <- truth_data %>%
+  truth_data <- truth %>%
     mutate(true_value = value,
            location_name = location) %>%
     select(date, location_name, true_value)
