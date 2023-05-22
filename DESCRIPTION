@@ -2,9 +2,9 @@ Package: CovidCAR
 Type: Package
 Title: Forecast US Covid19 Hospital Incidence using a Conditional Autoregressive Models
 Version: 0.1.0
-Authors@R: person("John", "Humphreys", email = "unp7@cdc.gov",
+Authors@R: person("John", "Humphreys", email = "jmh09r@my.fsu.edu",
                   role = c("aut", "cre"))
-Maintainer: The package maintainer <unp7@cdc.gov>
+Maintainer: The package maintainer <jmh09r@my.fsu.edu>
 Description: Package provides functions to facilitate data pre-processing, Conditional
     Autoregressive (CAR) model construction, and formatting of model results for submission
     to the covid19-forecast-hub.
