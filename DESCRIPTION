@@ -2,13 +2,15 @@ Package: CovidCAR
 Type: Package
 Title: Conditional Autoregressive Models for Forecasting US Covid19 Hospital Incidence
 Version: 0.1.0
+Date: 2023-05-22
 Authors@R: person("John", "Humphreys", email = "jmh09r@my.fsu.edu",
                   role = c("aut", "cre"))
-Maintainer: The package maintainer <jmh09r@my.fsu.edu>
+Maintainer: John Humphreys <jmh09r@my.fsu.edu>
 Description: Package provides functions to facilitate data pre-processing, Conditional
     Autoregressive (CAR) model construction, and formatting of model results for submission
     to the covid19-forecast-hub.
 License: MIT
+BugReports: https://github.com/JMHumphreys/CovidCAR/issues
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
