@@ -19,6 +19,9 @@
     <loc>https://jmhumphreys.github.io/CovidCAR/reference/append_region_index.html</loc>
   </url>
   <url>
+    <loc>https://jmhumphreys.github.io/CovidCAR/reference/cast_date_string.html</loc>
+  </url>
+  <url>
     <loc>https://jmhumphreys.github.io/CovidCAR/reference/create_forecast_template.html</loc>
   </url>
   <url>
@@ -35,6 +38,9 @@
   </url>
   <url>
     <loc>https://jmhumphreys.github.io/CovidCAR/reference/get_covid19_obs.html</loc>
+  </url>
+  <url>
+    <loc>https://jmhumphreys.github.io/CovidCAR/reference/get_hub_forecasts.html</loc>
   </url>
   <url>
     <loc>https://jmhumphreys.github.io/CovidCAR/reference/get_model_name.html</loc>
