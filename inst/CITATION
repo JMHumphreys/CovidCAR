@@ -1,0 +1,16 @@
+citHeader("To cite CovidCAR in publications use:")
+
+citEntry(
+  entry    = "Manual",
+  title    = ,
+  author   = ,
+  journal  = ,
+  year     = ,
+  volume   = ,
+  number   = ,
+  pages    = ,
+  url      = ,
+  textVersion = paste(
+
+  )
+)
