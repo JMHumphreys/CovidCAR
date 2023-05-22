@@ -20,7 +20,21 @@ format:
 editor_options: 
   chunk_output_type: console
 ---
+<style type="text/css">
 
+body, td {
+   font-size: 13pt;
+}
+code.r{
+  font-size: 11pt;
+}
+pre {
+  font-size: 11px
+}
+</style>
+
+
+    
 # Tutorial Overview
 This tutorial briefly outlines core functions used to preprocess observation data, build spatial-temporal models, and post-process model outputs.  Its purpose is to demonstrate a standard workflow not to provide an in depth examination of model building techniques.  
    
@@ -28,7 +42,7 @@ This tutorial briefly outlines core functions used to preprocess observation dat
 
 # Preliminaries   
 **Load needed packages**
-```{r echo=FALSE, warning=FALSE}
+```{r echo=TRUE, warning=FALSE, message=FALSE}
 #comments and prompts
 options(dplyr.summarise.inform = FALSE)
 library(cli)
@@ -54,9 +68,9 @@ library(mapproj)
 library(censusapi)
 
 #inference
-library(INLA)
-#Not available on CRAN
-#install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
+library(INLA) #Not available on CRAN
+#install.packages("INLA",repos=c(getOption("repos"),
+#INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
 
 library(EpiEstim)
 library(forecast)
@@ -74,11 +88,14 @@ The *setup_analysis()* function defines key date thresholds for model training a
   
 The function also allows for recording directory paths to (optionally) write outputs outside of the working directory or to pull previously cached observation data (cache as created with **Covid19Forecast**.v1).  
 ```{r}
+my_ouputs <- "C:/Users/unp7/Desktop/Misc/test_CovidCAR"
+my_local <- "C:/Users/unp7/Desktop/GitHub/covid19Forecasts/local/cache"
+
 setup_analysis(report_date = "2021-08-23", #report date, first forecast day
                training_period = 2*28, #days
                forecast_horizon = 28, #days
-               output_dir = "C:/Users/unp7/Desktop/Misc/test_CovidCAR", #write outputs here
-               local_cache_dir = "C:/Users/unp7/Desktop/GitHub/covid19Forecasts/local/cache" #cache
+               output_dir = my_ouputs, #write outputs here
+               local_cache_dir = my_local #cache
 )
 ```
 
@@ -131,7 +148,7 @@ The *get_covid19_obs()* function downloads hospital incidence data for a specifi
 + The **covidcast** package  
 + From a local *cache* as created by the **covid19Forecasts** package (i.e., refactored pipeline pkg)  
 + From *test* data available from the package itself (sample from summer 2021)     
-```{r}
+```{r warning=FALSE, message=FALSE}
 MinDate = min(su_yaml$full_time_span)
 MaxDate = max(su_yaml$full_time_span)
 
@@ -182,7 +199,7 @@ The *Rt_projection()* function combines the *estimate_R()* function from the [**
 + an order-2 random walk with noise and trend using the **INLA** package (method="dlm)
 
 NOTE: This is an experimental function and the "dlm" method is used as an example.  Models later in this demo will use the Rt_raw value to forecast concurrently with incidence estimation.   
-```{r}
+```{r warning=FALSE, message=FALSE}
 Rt_df = Rt_projection(train_data, mean_si = 5.7, std_si = 2, forecast_horizon = 28, method = "dlm")
 ```
 
@@ -289,7 +306,7 @@ nrm.stk = inla.stack(data = list(Y = train_data$nrm_resp), #Y is response variab
 ```
 
 
-# Model Priors and Forumulae  
+# Model Priors and Formulae  
 Specifying all priors and formulas for desired models using [**R-INLA**](https://www.r-inla.org/) syntax.  A deep-dive would be needed to describe in detail, which would be too time consuming for this workflow focused demonstration.  
   
 ### A few notes:
@@ -301,8 +318,7 @@ Specifying all priors and formulas for desired models using [**R-INLA**](https:/
 + Formulas 
   - **Y** is the response variable in the datastack
   - *f()* designates a function, level, or submodel in the hierarchy   
-  - **hyper=** refers to the prior for that *f()*  
-  - **model=**
+  - **hyper=** refers to the prior for that *f()* 
 
 ## Set Priors  
 ```{r}
@@ -550,8 +566,10 @@ There are many customization options for inference but have opted to keep *run_m
   - model outputs will be written to a *run_archive* subdirectory
   
 ## Run All Models   
-```{r}
+```{r warning=FALSE, message=FALSE}
 formulas.list = formulas.list[c(1:4)] #short list for demo, fast run models
+
+#formulas.list = formulas.list[3]
 
 models_out = run_model_list(formulas.list=formulas.list,
                             dataStack=nrm.stk,
@@ -575,38 +593,91 @@ head(read.csv(forecast_paths[["rw1_trend"]])) #formatted for submission
 # Model Scoring
 
 ## Score Forecasts
-The *score_WIS()* function 
+The *score_WIS()* function calculates the WIS score for forecasts by model.  Optional arguments can be included to indicate if files should be read from a directory (ingest = "path"), a dataframe in the environment (ingest = "dataframe"),or from a list object with individual file paths (ingest = "list") as returned by *extract_forecasts()*.
+  
+The 'missing' option can be used to specify how missing observation data should be handled; 'remove' from data or fill with 'zero'.    
 ```{r}
 truth_data <- train_data %>%
   select(date, location, value)
 
-my_scores = score_WIS(forecast_data = forecast_paths, truth=truth_data, ingest = "list") 
+my_scores <- score_WIS(forecast_data = forecast_paths, truth=truth_data, ingest = "list", missing = "remove") 
 
+#Example using ingest=path
 #my_dir = "C:/Users/unp7/Desktop/Misc/test_CovidCAR/2021-08-23-CovidCAR-run2023-05-20/forecasts"
 #my_scores = score_WIS(forecast_data = my_dir, truth=truth_data, ingest = "path") 
+
 head(my_scores)
+
+#overall
+wis_rank <- my_scores %>%
+  group_by(model) %>%
+  summarise(mean_wis = mean(WIS)) %>%
+  arrange(mean_wis) %>%
+  mutate(wisRank = row_number())
+
+wis_rank
 ```
 
-
+**Diagnostic score plots**  
+The *plot_WIS_lines()* function has options to make quick plots of WIS scores returned by *score_WIS()*.   
 ```{r}
 unique(my_scores$model)
 
+#lines showing absolute WIS
 plot_WIS_lines(my_scores, by = "date", range = "abs")
 
+#lines showing scaled WIS
 plot_WIS_lines(my_scores, by = "date", range = "scaled", scale_model = "base_rw1")
 
-plot_WIS_lines(my_scores, by = "tile", range = "scaled", scale_model = "base_rw1")
+#tiles with optional 'limit' that recodes: (WIS >= limit) -> limit
+plot_WIS_lines(my_scores, by = "tile", range = "scaled", scale_model = "base_rw1", limit = 2)
+```
 
 
+# Ensemble
+
+```{r}
+my_mae <- score_MAE(forecast_data = forecast_paths, truth=truth_data, ingest = "list", missing = "remove") 
+
+mod_rank <- left_join(my_mae, wis_rank, by="model") #combine with overall WIS
+
+mod_rank
+```
+
+The *propose_weights()* function
+```{r}
+my_wis_weights <- propose_weights(forecast_data = forecast_paths, 
+                             ingest = "list",
+                             rank_df = mod_rank,
+                             rankCol = "mean_wis",
+                             team = "CFA",
+                             mod_name = "wis_ensemble")
+
+my_wis_weights
+
+my_mae_weights <- propose_weights(forecast_data = forecast_paths, 
+                             ingest = "list",
+                             rank_df = mod_rank, 
+                             rankCol = "MAE",
+                             drop = 4,
+                             team = "CFA",
+                             mod_name = "mae_ensemble")
+my_wis_weights
+```
 
 
+## Ensemble Re-scoring 
+```{r}
+truth_data <- train_data %>%
+  select(date, location, value)
 
+myDir <- "C:/Users/unp7/Desktop/Misc/test_CovidCAR/2021-08-23-CovidCAR-run2023-05-21/forecasts"
+new_mae <- score_MAE(forecast_data = myDir, truth=truth_data, ingest = "path", missing = "remove") 
+new_mae
 ```
 
 
 
-
-# Ensemble
 ## Historic Forecasts
 
 

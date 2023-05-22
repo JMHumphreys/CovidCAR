@@ -26,6 +26,10 @@ download_boundaries <- function(unit = "state", proj = "EPSG:5070") {
   # Create output directory if it does not exist
   dir.create(paste0(su_yaml$out_dir_name,"/polygons"), recursive = TRUE, showWarnings = FALSE)
 
+  if(unit == "county"){
+    cli_alert("Warning: Intermittent timeout failures occur with county-level downloads")
+  }
+
   # Specify URL
   url_county <- "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/us-county-boundaries/exports/shp?lang=en&timezone=America%2FDenver"
   url_state <- "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/us-state-boundaries/exports/shp"
