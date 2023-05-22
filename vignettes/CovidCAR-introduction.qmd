@@ -79,6 +79,7 @@ library(forecast)
 [**CovidCAR**](https://github.com/JMHumphreys/CovidCAR) currently on GitHub  
 ```{r}
 library(CovidCAR)
+#devtools::install_github("JMHumphreys/CovidCAR")
 ```
 
 # Setup Analysis 
