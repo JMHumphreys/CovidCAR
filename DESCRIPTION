@@ -1,6 +1,6 @@
 Package: CovidCAR
 Type: Package
-Title: Forecast US Covid19 Hospital Incidence using a Conditional Autoregressive Models
+Title: Conditional Autoregressive Models for Forecasting US Covid19 Hospital Incidence
 Version: 0.1.0
 Authors@R: person("John", "Humphreys", email = "jmh09r@my.fsu.edu",
                   role = c("aut", "cre"))

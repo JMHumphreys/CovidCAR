@@ -36,7 +36,7 @@ pre {
 
     
 # Tutorial Overview
-This tutorial briefly outlines core functions used to preprocess observation data, build spatial-temporal models, and post-process model outputs.  Its purpose is to demonstrate a standard workflow not to provide an in depth examination of model building techniques.  
+This tutorial briefly outlines core functions used to preprocess observation data, build spatial-temporal models, and post-process model outputs.  Its purpose is to demonstrate a standard workflow not to provide an in depth examination of functions or model building techniques.  
    
    
 
@@ -152,8 +152,8 @@ The *get_covid19_obs()* function downloads hospital incidence data for a specifi
 MinDate = min(su_yaml$full_time_span)
 MaxDate = max(su_yaml$full_time_span)
 
-testData = get_covid19_obs(source = "covidcast", start_date = MinDate, end_date = MaxDate)
-#testData = get_covid19_obs(source = "cache", start_date = MinDate, end_date = MaxDate)
+#testData = get_covid19_obs(source = "covidcast", start_date = MinDate, end_date = MaxDate)
+testData = get_covid19_obs(source = "cache", start_date = MinDate, end_date = MaxDate)
 #testData = get_covid19_obs(source = "test", start_date = MinDate, end_date = MaxDate)
 
 dim(testData)
