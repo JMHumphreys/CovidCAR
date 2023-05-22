@@ -17,7 +17,9 @@
 #' @importFrom dplyr select mutate left_join filter
 #' @importFrom lubridate ymd
 #' @importFrom arrow open_dataset collect as.Date
-get_covid19_obs <- function(source = c("covidcast","cache","test"), start_date, end_date, write_copy = TRUE) {
+get_hub_forecasts <- function(source = c("covidHubUtils","cache","test"),
+                              models = NULL,
+                              write_copy = TRUE) {
 
   if(source == "cache" & class(su_yaml$local_cache_dir) != "character"){
     cli_abort("Where's the cache? Change 'source=' or run setup_analysis() to designate local cache location")}
@@ -27,58 +29,78 @@ get_covid19_obs <- function(source = c("covidcast","cache","test"), start_date, 
   state_crosswalk <- read_delim("https://www2.census.gov/geo/docs/reference/state.txt", delim = "|") %>%
     select(location = STATE, geo_value = STUSAB, location_name = STATE_NAME)
 
+  if(is.null(models)){
+    models <- c("COVIDhub-trained_ensemble", "COVIDhub-ensemble", "COVIDhub-baseline")
+
+  }
+
   # Obtain data based on the chosen source
   switch(source,
-         "covidcast" = {
-           cli_alert("Fetching COVID-19 observations using covidcast")
-           signal_data <- covidcast::covidcast_signal(data_source = "hhs",
-                                                      signal = "confirmed_admissions_covid_1d",
-                                                      start_day = start_date, end_day = end_date,
-                                                      geo_type = "state", time_type = "day") %>%
-             mutate(signal = "hosp",
-                    date = time_value,
-                    geo_value = toupper(geo_value)) %>%
-             select(date, geo_value, value, signal) %>%
-             left_join(state_crosswalk, by = "geo_value") %>%
-             select(-geo_value)
-           signal_data$location_name[signal_data$location_name == "U.S. Virgin Islands"] = "Virgin Islands"
+         "covidHubUtils" = {
+           cli_alert("Fetching COVID-19 forecasts using covidHubUtils")
+
+           signal_data <- load_forecasts(
+             models = models,
+             hub = c("US"),
+             dates = as_date(su_yaml$forecast_date),
+             date_window_size = 0,
+             targets = paste(0:27, "day ahead inc hosp"),
+             source = "zoltar",
+             verbose = FALSE
+           ) %>%
+             filter(location != "US") %>%
+             select(model, forecast_date, location, target_end_date, type,  quantile, value)
          },
          "cache" = {
-           cli_alert("Reading COVID-19 observations from local cache")
+           cli_alert("Reading COVID-19 forecasts from local cache")
 
            #date checks
-           min_date <- as.Date(start_date, format = "%Y-%m-%d")
-           max_date <- as.Date(end_date, format = "%Y-%m-%d")
+           forecast_date <- as_date(su_yaml$forecast_date)
+           forecast_end <- as_date(forecast_date, format = "%Y-%m-%d") + 27
 
-           start_date <- cast_date_string(start_date, "0000-00-00")
-           end_date <- cast_date_string(end_date, "9999-99-99")
+           begin_date <- cast_date_string(forecast_date, "0000-00-00")
+           end_date <- cast_date_string(forecast_end, "9999-99-99")
 
            #cache parquet files index with arrow
-           query <- arrow::open_dataset(file.path(su_yaml$local_cache_dir, "observed")) %>%
-             mutate(across(date, as.character))
+           query <- arrow::open_dataset(
+             file.path(su_yaml$local_cache_dir, "forecast"),
+             partitioning = arrow::schema(forecast_date = arrow::string())
+           )
 
-           # filter by dates
-           query <- filter(query, between(date, start_date, end_date))
-           query <- filter(query, signal == "hosp")
+           #match index names
+           query <- query %>%
+             mutate(signal = case_when(
+               str_detect(target, "cum death") ~ "cum_death",
+               str_detect(target, "inc death") ~ "death",
+               str_detect(target, "inc hosp") ~ "hosp"
+             ))
+
+           #filter query
+           query <- query %>%
+             filter(signal == "hosp",
+                    forecast_date == begin_date,
+                    target_end_date <= forecast_end,
+                    location %in% state_crosswalk$location,
+                    model %in% models)
 
            #states only
            signal_data <- collect(query) %>%
-             filter(location != "US") %>%
-             mutate(across(date, ymd))
+             mutate(across(c(forecast_date, target_end_date), ymd)) %>%
+             select(model, forecast_date, location, target_end_date, type,  quantile, value)
          },
          "test" = {
-           cli_alert("Loading test data for the period 2021-06-28 through 2021-09-20")
-           load("data/Covid19_hosp.RData")
-           signal_data <- Covid19_hosp
+           cli_alert("Loading test forecast data for the period 2021-08-23 through 2021-09-19")
+           load("data/Covid19_forecasts_2021-08-23.RData")
+           signal_data <- signal_data
          }
 
   )
 
         if(write_copy == TRUE){
 
-          cli_alert("Writing observation data to analysis directory")
+          cli_alert("Writing forecast data to analysis directory")
 
-          fdir_name <- paste0(su_yaml$out_dir_name,"/observations")
+          fdir_name <- paste0(su_yaml$out_dir_name,"/hub_forcasts")
           if (!dir.exists(fdir_name)) {
             dir.create(fdir_name)
           }
@@ -89,5 +111,5 @@ get_covid19_obs <- function(source = c("covidcast","cache","test"), start_date, 
           write.csv(signal_data, file = paste0(filename_loop), row.names = FALSE)
         }
 
-  return(signal_data)
+  return(as.data.frame(signal_data))
 }

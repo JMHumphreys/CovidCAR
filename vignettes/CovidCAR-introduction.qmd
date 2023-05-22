@@ -67,6 +67,12 @@ library(mapproj)
 #census data
 library(censusapi)
 
+#forecast data
+library(zoltr) #Not available on CRAN
+#remotes::install_github("reichlab/zoltr")
+library(covidHubUtils) #Not available on CRAN
+#remotes::install_github("reichlab/covidHubUtils")
+
 #inference
 library(INLA) #Not available on CRAN
 #install.packages("INLA",repos=c(getOption("repos"),
@@ -153,8 +159,8 @@ The *get_covid19_obs()* function downloads hospital incidence data for a specifi
 MinDate = min(su_yaml$full_time_span)
 MaxDate = max(su_yaml$full_time_span)
 
-#testData = get_covid19_obs(source = "covidcast", start_date = MinDate, end_date = MaxDate)
-testData = get_covid19_obs(source = "cache", start_date = MinDate, end_date = MaxDate)
+testData = get_covid19_obs(source = "covidcast", start_date = MinDate, end_date = MaxDate, write_copy = TRUE)
+#testData = get_covid19_obs(source = "cache", start_date = MinDate, end_date = MaxDate)
 #testData = get_covid19_obs(source = "test", start_date = MinDate, end_date = MaxDate)
 
 dim(testData)
@@ -680,7 +686,15 @@ new_mae
 
 
 ## Historic Forecasts
+The *get_hub_forecasts()* function 
+```{r}
+hist_forecasts <- get_hub_forecasts(source = "covidHubUtils",
+                                    models = c("COVIDhub-trained_ensemble", "COVIDhub-baseline"),
+                                    write_copy = TRUE)
 
+dim(hist_forecasts)
+head(hist_forecasts)
+```
 
 
 
