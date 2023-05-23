@@ -583,7 +583,7 @@ There are many customization options for inference but have opted to keep *run_m
   
 ## Run All Models   
 ```{r warning=FALSE, message=FALSE}
-formulas.list = formulas.list[c(1:4)] #short list for demo, fast run models
+#formulas.list = formulas.list[c(1:4)] #short list for demo, fast run models
 
 models_out = run_model_list(formulas.list=formulas.list,
                             dataStack=nrm.stk,
