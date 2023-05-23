@@ -61,6 +61,7 @@ score_WIS <- function(forecast_data, truth, ingest = c("dataframe", "path", "lis
       select(model, date, location_name, forecast_date, quantile, prediction)
   }
 
+
       #match to truth
       truth <- truth %>%
         mutate(true_value = value,

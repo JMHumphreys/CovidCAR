@@ -59,7 +59,7 @@ score_MAE <- function(forecast_data, truth, ingest = c("dataframe", "path", "lis
       select(model, date, location_name, forecast_date, prediction)
   }
 
-  #match to truth
+    #match to truth
   truth <- truth %>%
     mutate(true_value = value,
            location_name = location) %>%
