@@ -1,22 +1,36 @@
-#' Obtain COVID-19 Observation Data
+#' Get COVID-19 forecasts from various sources
 #'
-#' This function obtains the COVID-19 observation data based on the chosen source.
+#' This function allows you to obtain COVID-19 forecasts based on selected data source. The data can come from covidHubUtils, cache or test depending on preference.
 #'
-#' @param source A character string indicating the source of the data to be obtained. Allowed values are "covidcast" (to fetch data using covidcast), "cache" (to read data from local cache) and "test" (to load test data).
-#' @param start_date A character string indicating the start date of the period for which the data is needed. The date should be in the format "YYYY-MM-DD".
-#' @param end_date A character string indicating the end date of the period for which the data is needed. The date should be in the format "YYYY-MM-DD".
-#' @param write_copy A logical value indicating whether the data obtained should be written to a file or not. The default value is TRUE.
+#' @param source A character vector to specify where the forecast data should be obtained from (default is 'covidHubUtils'). Accepted values include "covidHubUtils" for fetching data online, "cache" for reading saved data from local cache, and "test" for loading test data locally.
+#' @param models A character vector of models to be included in the query.
+#'        Default is NULL which includes COVIDhub-trained_ensemble, COVIDhub-ensemble, and COVIDhub-baseline.
+#' @param write_copy A logical value indicating if a copy of the downloaded data should be written to the analysis directory. Default is TRUE.
 #'
-#' @return Returns a data frame containing COVID-19 observation data based on the chosen source.
+#' @return Returns a dataframe containing COVID-19 forecasts with columns for model name, forecast date, location, target end date, type, quantile, and value.
 #'
-#' @details If source = "covidcast", the function fetches the COVID-19 observation data using the covidcast package. If source = "cache", the function reads the COVID-19 observation data from the local cache. If source = "test", the function loads test data for the period 2021-06-28 through 2021-09-20. The function also loads state crosswalk data and performs some date checks and data filtering based on the selected source.
-#'
-#' If write_copy = TRUE, the data obtained is written to a .csv file in a newly created directory named "observations" within the analysis directory.
-#'
+#' @import cli_alert
+#' @importFrom methods as
 #' @importFrom readr read_delim
-#' @importFrom dplyr select mutate left_join filter
-#' @importFrom lubridate ymd
-#' @importFrom arrow open_dataset collect as.Date
+#' @importFrom jsonlite toJSON
+#' @importFrom arrow open_dataset schema mutate filter collect
+#' @importFrom dplyr select across case_when
+#' @importFrom lubridate ymd as_date
+#'
+#' @examples
+#' #get Hub forecasts using default arguments:
+#' get_hub_forecasts()
+#'
+#' #get Hub forecasts specifying model(s):
+#' get_hub_forecasts(models = c("COVIDhub-ensemble"))
+#'
+#' #read saved data from cache:
+#' get_hub_forecasts(source = "cache")
+#'
+#' #load test data:
+#' get_hub_forecasts(source = "test")
+#'
+#' @export
 get_hub_forecasts <- function(source = c("covidHubUtils","cache","test"),
                               models = NULL,
                               write_copy = TRUE) {
