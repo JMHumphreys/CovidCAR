@@ -201,6 +201,24 @@
       ],
       "Hash": "45f0398006e83a5b10b72a90663d8d8c"
     },
+    "RSQLite": {
+      "Package": "RSQLite",
+      "Version": "2.3.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "DBI",
+        "R",
+        "bit64",
+        "blob",
+        "cpp11",
+        "memoise",
+        "methods",
+        "pkgconfig",
+        "plogr"
+      ],
+      "Hash": "207c90cd5438a1f596da2cd54c606fee"
+    },
     "Rcpp": {
       "Package": "Rcpp",
       "Version": "1.0.10",
@@ -225,6 +243,17 @@
         "utils"
       ],
       "Hash": "39aed0e5fbb0b775a1752ad7813fc56c"
+    },
+    "RcppRoll": {
+      "Package": "RcppRoll",
+      "Version": "0.3.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "Rcpp"
+      ],
+      "Hash": "84a03997fbb5acfb3c9b43bad88fea1f"
     },
     "SparseM": {
       "Package": "SparseM",
@@ -323,6 +352,16 @@
         "R"
       ],
       "Hash": "543776ae6848fde2f48ff3816d0628bc"
+    },
+    "base64url": {
+      "Package": "base64url",
+      "Version": "1.4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "backports"
+      ],
+      "Hash": "0c54cf3a08cc0e550fbd64ad33166143"
     },
     "bit": {
       "Package": "bit",
@@ -607,6 +646,51 @@
       ],
       "Hash": "bb097fccb22d156624fd07cd2894ddb6"
     },
+    "covidHubUtils": {
+      "Package": "covidHubUtils",
+      "Version": "0.1.7",
+      "Source": "GitHub",
+      "Remotes": "reichlab/zoltr, epiforecasts/scoringutils",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "covidHubUtils",
+      "RemoteUsername": "reichlab",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "ccabcf65cc29ebcb4819868b973e91eade254ce5",
+      "Requirements": [
+        "DBI",
+        "MMWRweek",
+        "R",
+        "RColorBrewer",
+        "RSQLite",
+        "RcppRoll",
+        "colorspace",
+        "doParallel",
+        "dplyr",
+        "forcats",
+        "foreach",
+        "ggnewscale",
+        "ggplot2",
+        "grDevices",
+        "httr",
+        "jsonlite",
+        "lifecycle",
+        "lubridate",
+        "magrittr",
+        "parallel",
+        "purrr",
+        "readr",
+        "scoringutils",
+        "stats",
+        "stringr",
+        "tibble",
+        "tidyr",
+        "utils",
+        "yaml",
+        "zoltr"
+      ],
+      "Hash": "978afc552921e81efc22f7f7ec3b56a0"
+    },
     "covidcast": {
       "Package": "covidcast",
       "Version": "0.4.5",
@@ -765,6 +849,20 @@
         "vctrs"
       ],
       "Hash": "0a94c3c917918a1c90f4609171ff41b6"
+    },
+    "doParallel": {
+      "Package": "doParallel",
+      "Version": "1.0.17",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "foreach",
+        "iterators",
+        "parallel",
+        "utils"
+      ],
+      "Hash": "451e5edf411987991ab6a5410c45011f"
     },
     "downlit": {
       "Package": "downlit",
@@ -1064,6 +1162,16 @@
         "withr"
       ],
       "Hash": "d988f7c103c4354489f42e42e4889f9c"
+    },
+    "ggnewscale": {
+      "Package": "ggnewscale",
+      "Version": "0.4.8",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "ggplot2"
+      ],
+      "Hash": "871327b44b04bfb19dc28f60b96806c1"
     },
     "ggplot2": {
       "Package": "ggplot2",
@@ -1711,6 +1819,13 @@
         "withr"
       ],
       "Hash": "6b0c222c5071efe0f3baf3dae9aa40e2"
+    },
+    "plogr": {
+      "Package": "plogr",
+      "Version": "0.2.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "09eb987710984fc2905c7129c7d85e65"
     },
     "plyr": {
       "Package": "plyr",
@@ -2692,6 +2807,31 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "0d0056cc5383fbc240ccd0cb584bf436"
+    },
+    "zoltr": {
+      "Package": "zoltr",
+      "Version": "1.0.0",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "zoltr",
+      "RemoteUsername": "reichlab",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "4e77910020c15827002f4bbc25b5797bc9d68eed",
+      "Requirements": [
+        "MMWRweek",
+        "base64url",
+        "data.table",
+        "dplyr",
+        "httr",
+        "jsonlite",
+        "lubridate",
+        "magrittr",
+        "readr",
+        "rlang",
+        "utils"
+      ],
+      "Hash": "1cf394b4daa139d90c4178450752f11a"
     },
     "zoo": {
       "Package": "zoo",

@@ -683,9 +683,6 @@ my_wis_weights
 
 ## Ensemble Re-scoring 
 ```{r}
-my_truth <- train_data %>%
-  select(date, location, value)
-
 myDir <- "C:/Users/unp7/Desktop/Misc/test_CovidCAR/2021-08-23-CovidCAR-run2023-05-21/forecasts"
 new_mae <- score_MAE(forecast_data = myDir, truth=my_truth, ingest = "path", missing = "remove") 
 new_mae

@@ -62,12 +62,12 @@ score_WIS <- function(forecast_data, truth, ingest = c("dataframe", "path", "lis
   }
 
       #match to truth
-      truth_data <- truth %>%
+      truth <- truth %>%
         mutate(true_value = value,
                location_name = location) %>%
         select(date, location_name, true_value)
 
-      tmp_df <- left_join(tmp_df, truth_data, by=c("date","location_name"))
+      tmp_df <- left_join(tmp_df, truth, by=c("date","location_name"))
 
       no_obs <- length(which(is.na(tmp_df$true_value)))
       if(no_obs > 0 & missing == "remove"){
