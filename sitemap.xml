@@ -37,6 +37,9 @@
     <loc>https://jmhumphreys.github.io/CovidCAR/reference/getPovertyPop.html</loc>
   </url>
   <url>
+    <loc>https://jmhumphreys.github.io/CovidCAR/reference/get_api.html</loc>
+  </url>
+  <url>
     <loc>https://jmhumphreys.github.io/CovidCAR/reference/get_covid19_obs.html</loc>
   </url>
   <url>
@@ -56,6 +59,12 @@
   </url>
   <url>
     <loc>https://jmhumphreys.github.io/CovidCAR/reference/plot_WIS_lines.html</loc>
+  </url>
+  <url>
+    <loc>https://jmhumphreys.github.io/CovidCAR/reference/plot_forecasts_compare.html</loc>
+  </url>
+  <url>
+    <loc>https://jmhumphreys.github.io/CovidCAR/reference/plot_location.html</loc>
   </url>
   <url>
     <loc>https://jmhumphreys.github.io/CovidCAR/reference/plot_neighbors.html</loc>
