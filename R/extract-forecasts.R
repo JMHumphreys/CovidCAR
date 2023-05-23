@@ -18,6 +18,7 @@ extract_forecasts <- function(mod_out, dataStack, train_data, team = "TeamName")
     cli_abort("Run setup_analysis() to designate key analysis dates before proceeding")}
 
   forecast_paths = list()
+  plot_paths = list()
   return_quants = c(0.01, 0.025, seq(0.05, 0.95, by = 0.05), 0.975, 0.99)
 
   for(i in 1:length(mod_out)){
@@ -35,6 +36,13 @@ extract_forecasts <- function(mod_out, dataStack, train_data, team = "TeamName")
     getValues <- getValues %>%
       mutate(location = train_data$location,
              target_end_date = train_data$date)
+
+    #subset of data for plotting (fitted and predicted values)
+    plot_data <- getValues %>%
+      mutate(truth = train_data$value,
+             trn_tst = train_data$trn_tst,
+             location_name = train_data$location_name) %>%
+      select(location_name, location, target_end_date, trn_tst, truth, q_0.05, q_0.25, q_0.5, q_0.75, q_0.95)
 
     # Reshape data to long format
     getValues <- reshape2::melt(getValues, c("location", "target_end_date"))
@@ -80,10 +88,20 @@ extract_forecasts <- function(mod_out, dataStack, train_data, team = "TeamName")
     filename_loop <- paste0(fdir_name, "/", as_date(su_yaml$forecast_date), "-", paste0(team), "-", names(mod_out)[i],".csv")
     forecast_paths[[paste0(names(mod_out)[i])]] = filename_loop
     write.csv(getValues, file = paste0(filename_loop), row.names = FALSE)
+
+    # plot data to file
+    # Create directory if it doesn't exist
+    fdir_name <- paste0(su_yaml$out_dir_name,"/reports")
+    if (!dir.exists(fdir_name)) {
+      dir.create(fdir_name)
+    }
+
+    filename_loop <- paste0(fdir_name, "/", as_date(su_yaml$forecast_date), "-plot_data-", names(mod_out)[i],".csv")
+    plot_paths[[paste0(names(mod_out)[i])]] = filename_loop
+    write.csv(plot_data, file = paste0(filename_loop), row.names = FALSE)
   }
 
-  #forecast_paths <- list.files(fdir_name, pattern='csv', full.names = TRUE, recursive = TRUE)
-  #names(forecast_paths) = names(mod_out)
   forecast_paths <<- forecast_paths
+  plot_paths <<- plot_paths
 
 }

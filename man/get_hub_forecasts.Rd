@@ -2,7 +2,7 @@
 % Please edit documentation in R/get-hub-forecasts.R
 \name{get_hub_forecasts}
 \alias{get_hub_forecasts}
-\title{Obtain COVID-19 Observation Data}
+\title{Get COVID-19 forecasts from various sources}
 \usage{
 get_hub_forecasts(
   source = c("covidHubUtils", "cache", "test"),
@@ -11,22 +11,30 @@ get_hub_forecasts(
 )
 }
 \arguments{
-\item{source}{A character string indicating the source of the data to be obtained. Allowed values are "covidcast" (to fetch data using covidcast), "cache" (to read data from local cache) and "test" (to load test data).}
+\item{source}{A character vector to specify where the forecast data should be obtained from (default is 'covidHubUtils'). Accepted values include "covidHubUtils" for fetching data online, "cache" for reading saved data from local cache, and "test" for loading test data locally.}
 
-\item{write_copy}{A logical value indicating whether the data obtained should be written to a file or not. The default value is TRUE.}
+\item{models}{A character vector of models to be included in the query.
+Default is NULL which includes COVIDhub-trained_ensemble, COVIDhub-ensemble, and COVIDhub-baseline.}
 
-\item{start_date}{A character string indicating the start date of the period for which the data is needed. The date should be in the format "YYYY-MM-DD".}
-
-\item{end_date}{A character string indicating the end date of the period for which the data is needed. The date should be in the format "YYYY-MM-DD".}
+\item{write_copy}{A logical value indicating if a copy of the downloaded data should be written to the analysis directory. Default is TRUE.}
 }
 \value{
-Returns a data frame containing COVID-19 observation data based on the chosen source.
+Returns a dataframe containing COVID-19 forecasts with columns for model name, forecast date, location, target end date, type, quantile, and value.
 }
 \description{
-This function obtains the COVID-19 observation data based on the chosen source.
+This function allows you to obtain COVID-19 forecasts based on selected data source. The data can come from covidHubUtils, cache or test depending on preference.
 }
-\details{
-If source = "covidcast", the function fetches the COVID-19 observation data using the covidcast package. If source = "cache", the function reads the COVID-19 observation data from the local cache. If source = "test", the function loads test data for the period 2021-06-28 through 2021-09-20. The function also loads state crosswalk data and performs some date checks and data filtering based on the selected source.
+\examples{
+#get Hub forecasts using default arguments:
+get_hub_forecasts()
 
-If write_copy = TRUE, the data obtained is written to a .csv file in a newly created directory named "observations" within the analysis directory.
+#get Hub forecasts specifying model(s):
+get_hub_forecasts(models = c("COVIDhub-ensemble"))
+
+#read saved data from cache:
+get_hub_forecasts(source = "cache")
+
+#load test data:
+get_hub_forecasts(source = "test")
+
 }

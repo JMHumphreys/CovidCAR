@@ -18,7 +18,8 @@
 #' quantile = 0.5, value = c(10,20))
 #' example_truth <- data.frame(date = as.Date(c("2020-06-03","2020-06-04")), location_name = c("location1","location2"), value = c(8,22))
 #' score_WIS(example_forecast, example_truth, "dataframe", "remove")
-score_WIS <- function(forecast_data, truth, ingest = c("dataframe", "path", "list"), missing = c("remove","zero")) {
+score_WIS <- function(forecast_data, truth, ingest = c("dataframe", "path", "list"),
+                      missing = c("remove","zero")) {
 
   if (ingest == "path" & is.character(forecast_data)) {
     fnames <- list.files(forecast_data, pattern='csv', full.names = TRUE, recursive = TRUE)
@@ -49,11 +50,13 @@ score_WIS <- function(forecast_data, truth, ingest = c("dataframe", "path", "lis
   }
 
   if (ingest == "dataframe" & is.data.frame(forecast_data)) {
-    stopifnot(length(forecast_data$model_name) != 0)
+    if(length(forecast_data$model) == 0){
+    cli_abort("A 'model' column indicating model names is required when reading as a dataframe")
+    }
 
     tmp_df <- forecast_data %>%
       mutate(prediction = value,
-             model = model_name,
+             model = model,
              date = as.Date(target_end_date),
              forecast_date = as.Date(forecast_date),
              location_name = location) %>%

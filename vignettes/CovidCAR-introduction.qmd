@@ -163,7 +163,9 @@ The *get_covid19_obs()* function downloads hospital incidence data for a specifi
 MinDate = min(su_yaml$full_time_span)
 MaxDate = max(su_yaml$full_time_span)
 
-testData = get_covid19_obs(source = "covidcast", start_date = MinDate, end_date = MaxDate, write_copy = TRUE)
+testData = get_covid19_obs(source = "covidcast", 
+                           start_date = MinDate, end_date = MaxDate, 
+                           write_copy = TRUE)
 #testData = get_covid19_obs(source = "cache", start_date = MinDate, end_date = MaxDate)
 #testData = get_covid19_obs(source = "test", start_date = MinDate, end_date = MaxDate)
 
@@ -193,7 +195,8 @@ The *getPovertyPop()* function provides a wrapper function for the [**getCensus*
 ```{r}
 PovPop_data = getPovertyPop(key = get_api("censusapi"), #function reads 'secrets.yaml' for specified name
                             vars_pov = c("SAEPOVRTALL_PT"), 
-                            vars_pop = c('AGEGROUP','POP'), filt_age = c(12,18))
+                            vars_pop = c('AGEGROUP','POP'), 
+                            filt_age = c(12,18))
 
 
 train_data = left_join(train_data, PovPop_data, by = "location")
@@ -208,7 +211,8 @@ The *Rt_projection()* function combines the *estimate_R()* function from the [**
 
 NOTE: This is an experimental function and the "dlm" method is used as an example.  Models later in this demo will use the Rt_raw value to forecast concurrently with incidence estimation.   
 ```{r warning=FALSE, message=FALSE}
-Rt_df = Rt_projection(train_data, mean_si = 5.7, std_si = 2, forecast_horizon = 28, method = "dlm")
+Rt_df = Rt_projection(train_data, mean_si = 5.7, std_si = 2, 
+                      forecast_horizon = 28, method = "dlm")
 ```
 
 **Rt Estimates**  
@@ -338,17 +342,21 @@ bym_hyper <- list(phi = list(prior = "pc",
                        param = c(1, 0.01), 
                        initial = 1.5))  
 #Normal prior
-norm.prior <- list(theta=list(prior = "normal", param=c(0, 1)))
+norm.prior <- list(theta=list(prior = "normal", 
+                              param=c(0, 1)))
 
 
 #iid prior
-pc_prec_iid <- list(theta = list(prior="pc.prec", param=c(0.5, 0.01)))
+pc_prec_iid <- list(theta = list(prior="pc.prec", 
+                                 param=c(0.5, 0.01)))
 
 #ar1 prior
-pc_cor_ar1 <- list(theta = list(prior = 'pccor1', param = c(0.5, 0.9)))
+pc_cor_ar1 <- list(theta = list(prior = 'pccor1', 
+                                param = c(0.5, 0.9)))
 
 #rw2 prior
-pc_rw2 <- list(prec=list(prior="pc.prec", param=c(0.5,0.01)))
+pc_rw2 <- list(prec=list(prior="pc.prec", 
+                         param=c(0.5,0.01)))
 
 #bundle priors to archive run
 priors.list <- list()
@@ -584,10 +592,11 @@ models_out = run_model_list(formulas.list=formulas.list,
 ```
 
 # Extract and Format Forecasts
-The *extract_forecasts()* function pulls forecasts from models and saves them to a *forecasts* folder in analysis directory.  The function also returns a *forecast_paths* list object to the environment with file path names.  
+The *extract_forecasts()* function pulls forecasts from models and saves them to a *forecasts* folder in analysis directory.  The function returns a *forecast_paths* list object to the environment with file path names. 
   
 Forecasts are formatted to the specifications required for submission to the [covid19-forecast-hub](https://github.com/reichlab/covid19-forecast-hub).  
 ```{r}
+#models_out[["full_mod"]] <- full_model
 extract_forecasts(mod_out=models_out,
                   dataStack=nrm.stk, train_data=train_data,
                   team = "CFA")
@@ -598,6 +607,20 @@ head(read.csv(forecast_paths[["rw1_trend"]])) #formatted for submission
 ```
 
 
+**View forecasts**
+*extract_forecasts()* also returns a list ('plot_paths') of paths to plotting data from the extraction process.  This data can be accessed from the *plot_location()* function, which provides a quick diagnostic plot of forecast for a specific location.  
+   
+Note of Caution: If the 'loc=' option is left as NULL, all locations will be plotted to PDF file and saved in the 'Reports' folder of the analysis directory.  This may be time consuming!   
+```{r}
+OK_plot = plot_location(plot_path = plot_paths, model = "full_mod", loc = "Oklahoma")
+OK_plot
+
+AR_plot = plot_location(plot_path = plot_paths, model = "full_mod", loc = "Arkansas")
+AR_plot
+
+#plot_location(plot_path = plot_paths, model = "full_mod") #plots and saves all locations to a pdf file
+```
+
 # Model Scoring
 
 ## WIS Scores  
@@ -605,14 +628,11 @@ The *score_WIS()* function calculates the WIS score for forecasts by model.  Opt
   
 The 'missing' option can be used to specify how missing observation data should be handled; 'remove' from data or fill with 'zero'.    
 ```{r}
-my_truth <- train_data %>%      #Caution: my_truth may be different than your truth :)
+my_truth <- train_data %>% #Caution: my_truth may be different than your truth :)
   select(date, location, value)
 
-my_scores <- score_WIS(forecast_data = forecast_paths, truth=my_truth, ingest = "list", missing = "remove") 
-
-#Example using ingest=path
-#my_dir = "C:/Users/unp7/Desktop/Misc/test_CovidCAR/2021-08-23-CovidCAR-run2023-05-20/forecasts"
-#my_scores = score_WIS(forecast_data = my_dir, truth=my_truth, ingest = "path") 
+my_scores <- score_WIS(forecast_data = forecast_paths, truth=my_truth, 
+                       ingest = "list", missing = "remove") 
 
 head(my_scores)
 
@@ -623,7 +643,7 @@ wis_rank <- my_scores %>%
   arrange(mean_wis) %>%
   mutate(wisRank = row_number())
 
-wis_rank
+wis_rank #mean absolute values
 ```
 
 **Diagnostic score plots**  
@@ -635,10 +655,16 @@ unique(my_scores$model)
 plot_WIS_lines(my_scores, by = "date", range = "abs")
 
 #lines showing scaled WIS
-plot_WIS_lines(my_scores, by = "date", range = "scaled", scale_model = "base_rw1")
+plot_WIS_lines(my_scores, by = "date", range = "scaled", 
+               scale_model = "base_rw1")
 
-#tiles with optional 'limit' that recodes: (WIS >= limit) -> limit
-plot_WIS_lines(my_scores, by = "tile", range = "scaled", scale_model = "base_rw1", limit = 2)
+#optional 'limit' that recodes: (WIS >= limit) -> limit
+plot_WIS_lines(my_scores, by = "date", range = "scaled", 
+               scale_model = "base_rw1", limit = 2)
+
+#tile option
+plot_WIS_lines(my_scores, by = "tile", range = "scaled", 
+               scale_model = "base_rw1", limit = 2)
 ```
 
 ## Mean Absolute Error (MAE)  
@@ -649,38 +675,56 @@ my_mae
 ```
 
 # Ensemble
-
+The *propose_weights()* function assists with ensemble building by weighting models using a given performance metric.  The function scales the raw model comparison metric and then builds the ensemble by multiplying each forecasts by its model-specific weight and summing across all included models.  The resulting ensemble forecast is then standardized for Covid19-hub submission and written to the analysis directory (./forecasts).  The function returns the estimated weights to the environment.    
+   
+For example, the WIS and MAE scores could be used to weight individual models in an ensemble.  
+  
+First, compare WIS and MAE scores:  
 ```{r}
 mod_rank <- left_join(my_mae, wis_rank, by="model") #combine with overall WIS
 
-mod_rank
+mod_rank #note the scores rank models differently  
 ```
 
-The *propose_weights()* function
+The *propose_weights()* function can the be applied to generate weights and write the resulting ensemble.  
 ```{r}
-my_wis_weights <- propose_weights(forecast_data = forecast_paths, 
-                             ingest = "list",
-                             rank_df = mod_rank,
-                             rankCol = "mean_wis",
-                             team = "CFA",
-                             mod_name = "wis_ensemble")
+my_wis_weights <- propose_weights(forecast_data = forecast_paths, #standardized model forecasts
+                             ingest = "list",                     #read model locations as list
+                             rank_df = mod_rank,                  #use the data from WIS and MAE scoring         
+                             rankCol = "mean_wis",                #weight models based on this column
+                             team = "CFA",                        #team name (need be in file name per Covid19hub)
+                             mod_name = "wis_ensemble")           #label for the new ensemble forecast
 
-my_wis_weights
+my_wis_weights #The weights column reports the actual weights calculated for each model
 
+#another example,this time using MAE and including a 'drop' option
 my_mae_weights <- propose_weights(forecast_data = forecast_paths, 
                              ingest = "list",
                              rank_df = mod_rank, 
                              rankCol = "MAE",
-                             drop = 4,
+                             drop = 1,  #number of lowest ranked models to drop/exclude from ensemble
                              team = "CFA",
                              mod_name = "mae_ensemble")
 my_mae_weights
+
+
+
+#yet another example, not providing a rankCol -> function assumes equal weighting 
+equal_mae_weights <- propose_weights(forecast_data = forecast_paths, 
+                             ingest = "list",
+                             rank_df = mod_rank, 
+                             #rankCol = NULL,
+                             drop = 1,  #issues warning, dropping models without a ranking criteria
+                             team = "CFA",
+                             mod_name = "equal_mae_ensemble")
+equal_mae_weights
 ```
 
 
-## Ensemble Re-scoring 
+## Ensemble Re-scoring  
+Now that new ensembles have been added to the 'forecasts' directory, comparison scores can be recalculated.
 ```{r}
-myDir <- "C:/Users/unp7/Desktop/Misc/test_CovidCAR/2021-08-23-CovidCAR-run2023-05-21/forecasts"
+myDir <- file.path(su_yaml$out_dir_name, "forecasts")
 new_mae <- score_MAE(forecast_data = myDir, truth=my_truth, ingest = "path", missing = "remove") 
 new_mae
 ```
@@ -688,26 +732,43 @@ new_mae
 
 
 ## Historic Forecasts
-The *get_hub_forecasts()* function 
+The *get_hub_forecasts()* function retrieves forecasts previously submitted to the [covid19-forecast-hub](https://github.com/reichlab/covid19-forecast-hub).    
+    
+Similar to *get_covid19_obs()*, there are options to load from a local parquet cache (source="cache") as indexed with the [**Covid19Forecasts** package](https://github.com/cdcent/covid19Forecasts)(private repo) or to load "test" data included with the package.  There is also the an option to use the [**covidHubUtils** package](https://github.com/reichlab/covidHubUtils) to download data directly from covid19-forecast-hub.  
+  
+The queried results can also be filtered to specific models using the 'models=' option.  If not set, the 'model=' options defaults to forecasts from the COVIDhub-trained_ensemble, COVIDhub-ensemble, and COVIDhub-baseline models. 
+  
+By default, *get_hub_forecasts()* returns forecasts for the forecast period specified during initial setup using *setup_analysis()*. 
 ```{r}
 hist_forecasts <- get_hub_forecasts(source = "covidHubUtils",
-                                    models = c("COVIDhub-trained_ensemble", "COVIDhub-baseline"),
+                                    models = c("COVIDhub-trained_ensemble", "COVIDhub-baseline", "COVIDhub-ensemble"),
                                     write_copy = TRUE)
 
 dim(hist_forecasts)
 head(hist_forecasts)
+
+#because data is formatted to same standard, functions can read
+hub_rank <- score_WIS(forecast_data = hist_forecasts, truth=my_truth, 
+                      ingest = "dataframe", missing = "remove")
+
+hub_rank %>%
+  group_by(model) %>%
+  summarise(mean_wis = mean(WIS))
 ```
 
 
+**Combine with CovidCAR models**  
+The *plot_forecasts_compare()* function combines *plot_WIS_lines()* and *score_WIS()* to make a model WIS comparison line plot.  The 'hub_forecasts' option facilitates direct use of imported historical forecast data from the Covid19-forecast-hub.    
+```{r}
+my_plot <- plot_forecasts_compare(forecast_data = myDir, truth=my_truth, ingest = "path",
+                                  hub_forecasts = hist_forecasts,
+                                  scale_model = "COVIDhub-baseline",
+                                  limit = 4,
+                                  missing = "remove",
+                                  write_copy = TRUE)
 
+class(my_plot)
 
-
-
-
-
-
-
-
-
-
+my_plot
+```
 

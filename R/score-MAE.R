@@ -16,7 +16,8 @@
 #' @examples
 #' score_MAE(forecast_data = my_forecasts, truth = my_truth, ingest = "dataframe", missing = "remove")
 #'
-score_MAE <- function(forecast_data, truth, ingest = c("dataframe", "path", "list"), missing = c("remove","zero")) {
+score_MAE <- function(forecast_data, truth, ingest = c("dataframe", "path", "list"),
+                      missing = c("remove","zero")) {
 
   if (ingest == "path" & is.character(forecast_data)) {
     fnames <- list.files(forecast_data, pattern='csv', full.names = TRUE, recursive = TRUE)
@@ -47,11 +48,13 @@ score_MAE <- function(forecast_data, truth, ingest = c("dataframe", "path", "lis
   }
 
   if (ingest == "dataframe" & is.data.frame(forecast_data)) {
-    stopifnot(length(forecast_data$model_name) != 0)
+    if(length(forecast_data$model) == 0){
+      cli_abort("A 'model' column indicating model names is required when reading as a dataframe")
+    }
 
     tmp_df <- forecast_data %>%
       mutate(prediction = value,
-             model = model_name,
+             model = model,
              date = as.Date(target_end_date),
              forecast_date = as.Date(forecast_date),
              location_name = location) %>%

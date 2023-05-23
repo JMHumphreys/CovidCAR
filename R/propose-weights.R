@@ -26,7 +26,21 @@
 #' @import cli.alerts
 #' @export
 propose_weights <- function(forecast_data, ingest = c("dataframe", "path", "list"),
-                            rank_df, rankCol = NULL, drop=NULL, team = "TeamName", mod_name = "my_ensemble"){
+                            rank_df, rankCol = NULL, drop=NULL,
+                            team = "TeamName", mod_name = "my_ensemble"){
+
+  if(is.null(rankCol) & is.numeric(drop)){
+    cli_alert_danger("No rankCol but dropping models? Models will be dropped from end of list!")
+
+
+
+  }
+
+  if(is.null(rankCol)){
+    rank_df$rankCol = 1
+    rankCol = "rankCol"
+    cli_alert_warning("No rankCol provided, ensemble assumes equal weighting")
+  }
 
   if(is.numeric(drop) == TRUE){
 
@@ -60,10 +74,12 @@ propose_weights <- function(forecast_data, ingest = c("dataframe", "path", "list
   }
 
   if (ingest == "dataframe" & is.data.frame(forecast_data)) {
-    stopifnot(length(forecast_data$model_name) != 0)
+    if(length(forecast_data$model) == 0){
+      cli_abort("A 'model' column indicating model names is required when reading as a dataframe")
+    }
 
     tmp_df <- forecast_data %>%
-      mutate(model = model_name) %>%
+      mutate(model = model) %>%
       filter(model %in% weights_tmp$model)
   }
 
