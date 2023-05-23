@@ -267,7 +267,7 @@ head(train_data)
 
 ```
 
-## Respone Variable  
+## Response Variable  
 The response variable may differ between models.  In this case, copying hospital incidence (counts) to a new column, standardizing the distribution, and ensuring that observations for the forecast horizon are coded as NA.  Retaining the scaling object and rewriting as function *obs_scale()* to transform model outputs back to the observation scale later.  
   
 Again, response variables are specific to individual model setup so could be scaled differently or not at all to be fit with a different likelihood (Poisson, NegBinomial, etc).  Keeping it simple here.       
@@ -677,7 +677,7 @@ my_mae_weights <- propose_weights(forecast_data = forecast_paths,
                              drop = 4,
                              team = "CFA",
                              mod_name = "mae_ensemble")
-my_wis_weights
+my_mae_weights
 ```
 
 
