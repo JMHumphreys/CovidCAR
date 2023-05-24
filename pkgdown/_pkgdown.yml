@@ -2,3 +2,11 @@ url: https://jmhumphreys.github.io/CovidCAR/
 template:
   bootstrap: 5
 
+navbar:
+ components:
+   articles:
+    text: Tutorials
+    menu:
+    - text: Overview
+    - text: Title A1
+      href: vignettes/CovidCAR-introduction.html
