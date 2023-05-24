@@ -17,7 +17,3 @@ A vector of dates from \code{y} that are nearest matches for dates given in \cod
 \description{
 This function returns the date from \code{y} that is the closest to each date in \code{x}.
 }
-\examples{
-Recode observed_dates to the biweekly intervals (14-day time periods).
-observed_dates <- seq(as_date("2021-07-23"), as_date("2021-09-23"), by =1 )
-}

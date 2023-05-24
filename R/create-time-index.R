@@ -5,9 +5,6 @@
 #' @param x A date vector, typically a column in a dataframe indicating date of observed case or incidence.
 #' @param y A vector of dates to search for matches, typically a customized series with specified interval length.
 #' @return A vector of dates from \code{y} that are nearest matches for dates given in \code{x}
-#' @examples
-#' Recode observed_dates to the biweekly intervals (14-day time periods).
-#' observed_dates <- seq(as_date("2021-07-23"), as_date("2021-09-23"), by =1 )
 #
 #' @export
 time_index = function(x, y) {
