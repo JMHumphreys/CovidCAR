@@ -6,13 +6,13 @@
 #' @param proj Projection for the shapefiles, defaults to "EPSG:5070".
 #' @return An object of class 'SpatialPolygonsDataFrame' which contains the state or county border polygons and their associated attributes.
 #' @examples
-#' \donotrun{
+#'
 #' #Download state boundaries to a directory called 'States':
 #' download_boundaries("./States")
 #'
 #' #Download county boundaries to a directory called 'Counties':
 #' download_boundaries("./Counties", unit = "county")
-#' }
+#'
 #'
 #' @importFrom plyr mapvalues
 #' @importFrom tools toTitleCase

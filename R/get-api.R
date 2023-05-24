@@ -15,6 +15,7 @@
 #' #Read API token for OpenWeather API from secrets.yaml
 #' get_api("OpenWeather_API")
 #'
+#' @export
 get_api <- function(api_name){
   yaml::read_yaml(file.path(getwd(), "secrets.yaml"),
                   readLines.warn = FALSE)[[paste(api_name)]]

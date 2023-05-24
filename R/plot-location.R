@@ -88,11 +88,8 @@ plot_location <- function(plot_path = plot_paths, model = NULL, loc = NULL){
 
   } else{
 
-    get_file <- read.csv(plot_path[[grep(model, plot_path)]]) %>%
+    get_file_f <- read.csv(plot_path[[grep(model, plot_path)]]) %>%
       filter(location_name == loc)
-    locs_vect <- unique(get_file$location_name)
-
-    get_file_f <- get_file %>% filter(location_name == locs_vect[i])
 
     MinDate = as_date(min(get_file_f$target_end_date))
     MaxDate = as_date(max(get_file_f$target_end_date))
@@ -117,7 +114,7 @@ plot_location <- function(plot_path = plot_paths, model = NULL, loc = NULL){
                    labels=scales::date_format("%Y-%m-%d"),
                    limits = c(MinDate, MaxDate)) +
       xlab("") +
-      ggtitle(locs_vect[i]) +
+      ggtitle(loc) +
       ylab("Hospital Incidence") +
       theme(panel.grid.minor = element_blank(),
             panel.grid.major = element_blank(),

@@ -112,7 +112,7 @@ plot_forecasts_compare <- function(forecast_data, ingest = c("dataframe", "path"
       as.data.frame()
 
 
-    if(is.null(scale_mod) == FALSE){
+    if(is.null(scale_model) == FALSE){
       scaler_df <- scores_out %>%
         filter(model == paste0(scale_model)) %>%
         mutate(scale_val = WIS) %>%
