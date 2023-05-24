@@ -18,12 +18,12 @@ An object of class 'SpatialPolygonsDataFrame' which contains the state or county
 Downloads and extracts shapefiles for either US states or counties. It creates a directory in the specified location if one does not exist already. The function downloads the shapefile from the specified URL, unzips it, reads it into an object of class 'sf', changes its projection to that of "EPSG:5070", fixes topology, matches state name with observation data and assigns unique identifiers.
 }
 \examples{
-\donotrun{
+
 #Download state boundaries to a directory called 'States':
 download_boundaries("./States")
 
 #Download county boundaries to a directory called 'Counties':
 download_boundaries("./Counties", unit = "county")
-}
+
 
 }

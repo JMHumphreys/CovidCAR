@@ -6,9 +6,6 @@
 #' @return A character string representing the model name.
 #' @examples
 #' get_model_name("model-1.csv")
-#' [1] "1"
-#' get_model_name("results-model-2.csv")
-#' [1] "2"
 get_model_name <- function(filename) {
   # First, we remove the ".csv" extension from the filename.
   filename <- sub(".csv$", "", filename)

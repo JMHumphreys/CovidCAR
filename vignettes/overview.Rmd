@@ -40,7 +40,7 @@ This introduction briefly outlines core functions used to preprocess observation
 
 ## Resources  
 + [The CovidCAR GitHub page](https://github.com/JMHumphreys/CovidCAR)    
-+ [CovidCAR Functions Reference site](https://jmhumphreys.github.io/CovidCAR/reference/index.html)  
++ [CovidCAR Functions Reference](https://jmhumphreys.github.io/CovidCAR/reference/index.html)  
   
   
 # Preliminaries   

@@ -17,7 +17,4 @@ This function takes in a filename in .csv format and returns the model name. The
 }
 \examples{
 get_model_name("model-1.csv")
-[1] "1"
-get_model_name("results-model-2.csv")
-[1] "2"
 }

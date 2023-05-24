@@ -1,0 +1,98 @@
+---
+title: "CovidCAR Package Overview"
+date: "2023-05-18"
+description: "CovidCAR is intended to facilitate Covid19 model building, ensembling, and evalutaion"
+format:
+  html:
+    df-print: kable
+    code-fold: show
+    code-summary: "Hide code"
+    code-overflow: wrap
+    toc-title: Page Contents
+    toc: true
+    toc-depth: 2
+    number-sections: false
+    html-math-method: katex
+    css: styles.css
+    theme: flatly
+    toc-location: left
+    smooth-scroll: true
+editor_options: 
+  chunk_output_type: console
+---
+<style type="text/css">
+
+body, td {
+   font-size: 13pt;
+}
+code.r{
+  font-size: 11pt;
+}
+pre {
+  font-size: 11pt
+}
+</style>
+
+
+    
+# Overview
+This introduction briefly outlines core functions used to preprocess observation data, build spatial-temporal models, and post-process model outputs.  Its purpose is to demonstrate a standard workflow not to provide an in depth examination of functions or model building techniques.  
+
+## Resources  
++ [The CovidCAR GitHub page](https://github.com/JMHumphreys/CovidCAR)    
++ [CovidCAR Functions Reference](https://jmhumphreys.github.io/CovidCAR/reference/index.html)  
+  
+  
+# Preliminaries   
+**Load needed packages**  
+A few of these packages are not available on CRAN and will need to be installed from other locations.  
+```{r echo=TRUE, warning=FALSE, message=FALSE}
+#comments and prompts
+options(dplyr.summarise.inform = FALSE)
+library(cli)
+
+
+#wrangling
+library(tidyverse)
+library(lubridate)
+library(arrow)
+library(Hmisc)
+library(yaml)
+
+#spatial manipulation
+library(sp)
+library(sf)
+library(spdep)
+library(rgeos)
+library(igraph)
+library(maptools)
+library(mapproj)
+
+#census data
+library(censusapi)
+
+#forecast data
+library(zoltr) #Not available on CRAN
+#remotes::install_github("reichlab/zoltr")
+library(covidHubUtils) #Not available on CRAN
+#remotes::install_github("reichlab/covidHubUtils")
+
+#inference
+library(INLA) #Not available on CRAN
+#install.packages("INLA",repos=c(getOption("repos"),
+#INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
+
+library(EpiEstim)
+library(forecast)
+```
+
+[**CovidCAR**](https://github.com/JMHumphreys/CovidCAR) currently on GitHub  
+```{r}
+library(CovidCAR)
+#devtools::install_github("JMHumphreys/CovidCAR")
+```
+
+# Setup Analysis 
+```{r}
+2+2
+```
