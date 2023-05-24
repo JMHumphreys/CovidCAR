@@ -8,5 +8,4 @@ navbar:
     text: Tutorials
     menu:
     - text: Overview
-    - text: Title A1
-      href: vignettes/CovidCAR-introduction.html
+      href: vignettes/overview.html
