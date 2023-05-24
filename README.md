@@ -1,6 +1,6 @@
 # CovidCAR  
-[CovidCAR Reference Website](https://jmhumphreys.github.io/CovidCAR/](https://jmhumphreys.github.io/CovidCAR/reference/index.html)  
-[Introduction and Overview](https://jmhumphreys.github.io/CovidCAR/articles](https://jmhumphreys.github.io/CovidCAR/articles/overview.html)  
+[CovidCAR Reference Website](https://jmhumphreys.github.io/CovidCAR/reference/index.html)  
+[Introduction and Overview](https://jmhumphreys.github.io/CovidCAR/articles/overview.html)  
 [Copy of Intro Script (here)](https://github.com/JMHumphreys/CovidCAR/blob/main/vignettes/overview.Rmd)  
   
    
