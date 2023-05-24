@@ -193,14 +193,6 @@ Demo models in this example are fairly simple but in many cases users will want 
    
 ## Demographic Data
 The *getPovertyPop()* function provides a wrapper function for the [**getCensus** package](https://centeronbudget.github.io/getcensus/) for loading American Community Survey (ACS) data from the U.S. Census Bureau.  In this example, an API key ('secret_api') is used to pull the percent of each state's total population in poverty (SAEPOVRTALL_PT) and the number of individuals over the age of 55yrs (given in the *vars_pop* option).
-```{r echo=FALSE}
-secret_api = "51074e4f14daf997bb47f6ccf553a05f38e6ccb9"
-
-PovPop_data = getPovertyPop(key = secret_api, #function reads 'secrets.yaml' for specified name
-                            vars_pov = c("SAEPOVRTALL_PT"), 
-                            vars_pop = c('AGEGROUP','POP'), 
-                            filt_age = c(12,18))
-```
 ```{r eval=FALSE}
 PovPop_data = getPovertyPop(key = get_api("censusapi"), #function reads 'secrets.yaml' for specified name
                             vars_pov = c("SAEPOVRTALL_PT"), 
