@@ -8,4 +8,4 @@ navbar:
     text: Articles
     menu:
     - text: Overview
-      href: articles/overview.html
+      href: articles/index.html
