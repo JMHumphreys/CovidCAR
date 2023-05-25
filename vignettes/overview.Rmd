@@ -193,14 +193,6 @@ Demo models in this example are fairly simple but in many cases users will want 
    
 ## Demographic Data
 The *getPovertyPop()* function provides a wrapper function for the [**getCensus** package](https://centeronbudget.github.io/getcensus/) for loading American Community Survey (ACS) data from the U.S. Census Bureau.  In this example, an API key ('secret_api') is used to pull the percent of each state's total population in poverty (SAEPOVRTALL_PT) and the number of individuals over the age of 55yrs (given in the *vars_pop* option).
-```{r echo=FALSE}
-secret_api = "51074e4f14daf997bb47f6ccf553a05f38e6ccb9"
-
-PovPop_data = getPovertyPop(key = secret_api, #function reads 'secrets.yaml' for specified name
-                            vars_pov = c("SAEPOVRTALL_PT"), 
-                            vars_pop = c('AGEGROUP','POP'), 
-                            filt_age = c(12,18))
-```
 ```{r eval=FALSE}
 PovPop_data = getPovertyPop(key = get_api("censusapi"), #function reads 'secrets.yaml' for specified name
                             vars_pov = c("SAEPOVRTALL_PT"), 
@@ -592,7 +584,7 @@ There are many customization options for inference but have opted to keep *run_m
   
 ## Run All Models   
 ```{r warning=FALSE, message=FALSE}
-#formulas.list = formulas.list[c(1:4)] #short list for demo, fast run models
+formulas.list = formulas.list[c(1:4)] #short list for demo, fast run models
 
 models_out = run_model_list(formulas.list=formulas.list,
                             dataStack=nrm.stk,
@@ -621,13 +613,13 @@ head(read.csv(forecast_paths[["rw1_trend"]])) #formatted for submission
    
 Note of Caution: If the 'loc=' option is left as NULL, all locations will be plotted to PDF file and saved in the 'Reports' folder of the analysis directory.  This may be time consuming!   
 ```{r}
-OK_plot = plot_location(plot_path = plot_paths, model = "car_full", loc = "Oklahoma")
+OK_plot = plot_location(plot_path = plot_paths, model = "base_car", loc = "Oklahoma")
 OK_plot
 
-AR_plot = plot_location(plot_path = plot_paths, model = "car_full", loc = "Arkansas")
+AR_plot = plot_location(plot_path = plot_paths, model = "base_car", loc = "Arkansas")
 AR_plot
 
-#plot_location(plot_path = plot_paths, model = "full_mod") #plots and saves all locations to a pdf file
+#plot_location(plot_path = plot_paths, model = "base_car") #plots and saves all locations to a pdf file
 ```
 
 # Model Scoring
@@ -770,7 +762,7 @@ hub_rank %>%
 The *plot_forecasts_compare()* function combines *plot_WIS_lines()* and *score_WIS()* to make a model WIS comparison line plot.  The 'hub_forecasts' option facilitates direct use of imported historical forecast data from the Covid19-forecast-hub.    
 ```{r}
 my_plot <- plot_forecasts_compare(forecast_data = myDir, truth=my_truth, ingest = "path",
-                                  hub_forecasts = hist_forecasts,
+                                  hub_forecasts = hist_forecasts, #historic forecasts
                                   scale_model = "COVIDhub-baseline",
                                   limit = 4,
                                   missing = "remove",

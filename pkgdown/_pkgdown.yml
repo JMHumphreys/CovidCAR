@@ -1,3 +1,20 @@
-url: https://jmhumphreys.github.io/CovidCAR/
 template:
   bootstrap: 5
+
+url: https://jmhumphreys.github.io/CovidCAR/
+
+reference:
+- title: Function Descriptions
+  desc: Function Descriptions
+  navbar: ~
+  contents:
+  - text: Function Descriptions
+    url:  https://jmhumphreys.github.io/CovidCAR/reference/index.html
+
+articles:
+- title: Package Use
+  desc: Examples and Tutorials
+  navbar: ~
+  contents:
+  - text: Introduction and Overview
+    url:  https://jmhumphreys.github.io/CovidCAR/articles/overview.html
