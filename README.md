@@ -7,8 +7,9 @@ The package provides functions to facilitate data pre-processing, Conditional
 ```{r}
 devtools::install_github("JMHumphreys/CovidCAR")
 ```
-## Resources
-[CovidCAR Function Reference Website](https://jmhumphreys.github.io/CovidCAR/reference/index.html)  
-[Introduction and Overview](https://jmhumphreys.github.io/CovidCAR/articles/overview.html)  
-[Copy of Intro Script (here)](https://github.com/JMHumphreys/CovidCAR/blob/main/vignettes/overview.Rmd)  
+## Resources  
+[**CovidCAR Website**](https://github.com/JMHumphreys/CovidCAR)     
+  [CovidCAR Functions (Reference)](https://jmhumphreys.github.io/CovidCAR/reference/index.html)     
+  [Introduction and Overview (Articles)](https://jmhumphreys.github.io/CovidCAR/articles/overview.html)    
+
   
