@@ -18,13 +18,28 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
+      <ul class="navbar-nav me-auto"><li class="active nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-reference">Reference</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-reference">
+    <a class="dropdown-item" href="../reference/index.html">Function Descriptions</a>
+  </div>
+</li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/overview.html">Introduction and Overview</a>
+  </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
-      <ul class="navbar-nav"></ul></div>
+      <ul class="navbar-nav"><li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/JMHumphreys/CovidCAR/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul></div>
 
     
   </div>
@@ -52,6 +67,11 @@
         <dd>Extract Region Index from Spatial Object and Partition Training and Testing Data</dd>
       </dl><dl><dt>
           
+          <code><a href="cast_date_string.html">cast_date_string()</a></code> 
+        </dt>
+        <dd>Convert Date String to Date Object</dd>
+      </dl><dl><dt>
+          
           <code><a href="create_forecast_template.html">create_forecast_template()</a></code> 
         </dt>
         <dd>Create a Forecast Template</dd>
@@ -77,9 +97,19 @@
         <dd>Returns a merged dataframe with poverty and population data by state for specified age range.</dd>
       </dl><dl><dt>
           
+          <code><a href="get_api.html">get_api()</a></code> 
+        </dt>
+        <dd>Get API key from secrets.yaml file</dd>
+      </dl><dl><dt>
+          
           <code><a href="get_covid19_obs.html">get_covid19_obs()</a></code> 
         </dt>
-        <dd>Obtain COVID-19 observed data based on the chosen source</dd>
+        <dd>Obtain COVID-19 Observation Data</dd>
+      </dl><dl><dt>
+          
+          <code><a href="get_hub_forecasts.html">get_hub_forecasts()</a></code> 
+        </dt>
+        <dd>Get COVID-19 forecasts from various sources</dd>
       </dl><dl><dt>
           
           <code><a href="get_model_name.html">get_model_name()</a></code> 
@@ -95,6 +125,16 @@
           <code><a href="inla_dlm.html">inla_dlm()</a></code> 
         </dt>
         <dd>Dynamic Linear Model using INLA</dd>
+      </dl><dl><dt>
+          
+          <code><a href="plot_forecasts_compare.html">plot_forecasts_compare()</a></code> 
+        </dt>
+        <dd>Plot comparison of forecasts</dd>
+      </dl><dl><dt>
+          
+          <code><a href="plot_location.html">plot_location()</a></code> 
+        </dt>
+        <dd>Plot Location</dd>
       </dl><dl><dt>
           
           <code><a href="plot_neighbors.html">plot_neighbors()</a></code> 
