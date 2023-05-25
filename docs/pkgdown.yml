@@ -9,9 +9,9 @@ navbar:
     text: Articles
     menu:
     - text: Introduction and Overview
-      href: articles/overview.html
+      href: overview.html
    reference:
     text: Reference
     menu:
     - text: Function Descriptions
-      href: reference/index.html
+      href: index.html
