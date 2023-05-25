@@ -1,14 +1,14 @@
 # CovidCAR  
-[CovidCAR Reference Website](https://jmhumphreys.github.io/CovidCAR/reference/index.html)  
-[Introduction and Overview](https://jmhumphreys.github.io/CovidCAR/articles/overview.html)  
-[Copy of Intro Script (here)](https://github.com/JMHumphreys/CovidCAR/blob/main/vignettes/overview.Rmd)  
-  
-   
+CovidCAR is an r-package to forecast US Covid19 Hospital Incidence using Conditional AutoRegressive Models.
 
-## Under Development  
-
-**Package:** CovidCAR  
-**Title:** Forecast US Covid19 Hospital Incidence using a Conditional AutoRegressive Model.  
 **Description:** Package provides functions to facilitate data pre-processing, Conditional
     Autoregressive (CAR) model construction, and formatting of model results for submission
     to the [covid19-forecast-hub](https://github.com/reichlab/covid19-forecast-hub).
+```{r}
+devtools::install_github("JMHumphreys/CovidCAR")
+```
+## Resources
+[CovidCAR Function Reference Website](https://jmhumphreys.github.io/CovidCAR/reference/index.html)  
+[Introduction and Overview](https://jmhumphreys.github.io/CovidCAR/articles/overview.html)  
+[Copy of Intro Script (here)](https://github.com/JMHumphreys/CovidCAR/blob/main/vignettes/overview.Rmd)  
+  
