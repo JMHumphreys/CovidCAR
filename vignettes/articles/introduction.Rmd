@@ -583,7 +583,7 @@ There are many customization options for inference but have opted to keep *run_m
   
 ## Run All Models   
 ```{r warning=FALSE, message=FALSE}
-formulas.list = formulas.list[c(1:4)] #short list for demo, fast run models
+#formulas.list = formulas.list[c(1:4)] #short list for demo, fast run models
 
 models_out = run_model_list(formulas.list=formulas.list,
                             dataStack=nrm.stk,
@@ -596,7 +596,6 @@ The *extract_forecasts()* function pulls forecasts from models and saves them to
   
 Forecasts are formatted to the specifications required for submission to the [covid19-forecast-hub](https://github.com/reichlab/covid19-forecast-hub).  
 ```{r}
-#models_out[["full_mod"]] <- full_model
 extract_forecasts(mod_out=models_out,
                   dataStack=nrm.stk, train_data=train_data,
                   team = "CFA")
@@ -612,13 +611,13 @@ head(read.csv(forecast_paths[["rw1_trend"]])) #formatted for submission
    
 Note of Caution: If the 'loc=' option is left as NULL, all locations will be plotted to PDF file and saved in the 'Reports' folder of the analysis directory.  This may be time consuming!   
 ```{r}
-OK_plot = plot_location(plot_path = plot_paths, model = "base_car", loc = "Oklahoma")
+OK_plot = plot_location(plot_path = plot_paths, model = "car_full", loc = "Oklahoma")
 OK_plot
 
-AR_plot = plot_location(plot_path = plot_paths, model = "base_car", loc = "Arkansas")
+AR_plot = plot_location(plot_path = plot_paths, model = "car_full", loc = "Arkansas")
 AR_plot
 
-#plot_location(plot_path = plot_paths, model = "base_car") #plots and saves all locations to a pdf file
+#plot_location(plot_path = plot_paths, model = "car_full") #plots and saves all locations to a pdf file
 ```
 
 # Model Scoring

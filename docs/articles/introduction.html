@@ -220,13 +220,13 @@ resolved due to large file size.</p>
 <span><span class="co">## [1] "sp"</span></span></code></pre>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">States</span><span class="op">@</span><span class="va">data</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Region"</span>, <span class="st">"State"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span> <span class="co">#appended attributes  </span></span></code></pre></div>
-<pre><code><span><span class="co">##   Region          State</span></span>
-<span><span class="co">## 1      1 Virgin Islands</span></span>
-<span><span class="co">## 2      2      Wisconsin</span></span>
-<span><span class="co">## 3      3        Vermont</span></span>
-<span><span class="co">## 4      4     New Jersey</span></span>
-<span><span class="co">## 5      5       Colorado</span></span>
-<span><span class="co">## 6      6 South Carolina</span></span></code></pre>
+<pre><code><span><span class="co">##   Region                    State</span></span>
+<span><span class="co">## 1      1              Puerto Rico</span></span>
+<span><span class="co">## 2      2 Northern Mariana Islands</span></span>
+<span><span class="co">## 3      3                 Arkansas</span></span>
+<span><span class="co">## 4      4            West Virginia</span></span>
+<span><span class="co">## 5      5             Rhode Island</span></span>
+<span><span class="co">## 6      6               Washington</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="adjacency-graph">Adjacency Graph<a class="anchor" aria-label="anchor" href="#adjacency-graph"></a>
@@ -252,15 +252,15 @@ and other locations based on proximity.</p>
 <span><span class="co">## Percentage nonzero weights: 7.142857 </span></span>
 <span><span class="co">## Average number of links: 4 </span></span>
 <span><span class="co">## 7 regions with no links:</span></span>
-<span><span class="co">## 1 24 32 33 38 42 54</span></span>
+<span><span class="co">## 1 2 17 19 20 33 50</span></span>
 <span><span class="co">## Link number distribution:</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##  0  1  2  3  4  5  6  7  8 </span></span>
 <span><span class="co">##  7  1  4  9  9 10 12  2  2 </span></span>
 <span><span class="co">## 1 least connected region:</span></span>
-<span><span class="co">## 13 with 1 link</span></span>
+<span><span class="co">## 52 with 1 link</span></span>
 <span><span class="co">## 2 most connected regions:</span></span>
-<span><span class="co">## 49 56 with 8 links</span></span></code></pre>
+<span><span class="co">## 12 36 with 8 links</span></span></code></pre>
 <p><strong>Example: All locations linked</strong></p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nb_coerced</span> <span class="op">=</span> <span class="fu"><a href="../reference/get_neighbors.html">get_neighbors</a></span><span class="op">(</span><span class="va">States</span>, connect<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
@@ -275,9 +275,9 @@ and other locations based on proximity.</p>
 <span><span class="co">##  1  2  3  4  5  6  7  8 </span></span>
 <span><span class="co">##  5  3 10 12 10 11  3  2 </span></span>
 <span><span class="co">## 5 least connected regions:</span></span>
-<span><span class="co">## 1 13 38 42 54 with 1 link</span></span>
+<span><span class="co">## 17 19 20 50 52 with 1 link</span></span>
 <span><span class="co">## 2 most connected regions:</span></span>
-<span><span class="co">## 49 56 with 8 links</span></span></code></pre>
+<span><span class="co">## 12 36 with 8 links</span></span></code></pre>
 <p><strong>View mapped adjacency</strong><br>
 The <em>plot_neighbors()</em> function overlays adjacency connections on
 mapped location boundaries.</p>
@@ -424,16 +424,16 @@ Checking <em>Rt_projection()</em> results</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Rt_df</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,<span class="op">]</span> <span class="co">#check values</span></span></code></pre></div>
 <pre><code><span><span class="co">##          date value signal location location_name       day trn_tst Region</span></span>
-<span><span class="co">## 1  2021-06-28     2   hosp       02        Alaska    Monday   train     38</span></span>
-<span><span class="co">## 2  2021-06-29     5   hosp       02        Alaska   Tuesday   train     38</span></span>
-<span><span class="co">## 3  2021-06-30     2   hosp       02        Alaska Wednesday   train     38</span></span>
-<span><span class="co">## 4  2021-07-01     6   hosp       02        Alaska  Thursday   train     38</span></span>
-<span><span class="co">## 5  2021-07-02     3   hosp       02        Alaska    Friday   train     38</span></span>
-<span><span class="co">## 6  2021-07-03     7   hosp       02        Alaska  Saturday   train     38</span></span>
-<span><span class="co">## 7  2021-07-04     3   hosp       02        Alaska    Sunday   train     38</span></span>
-<span><span class="co">## 8  2021-07-05     2   hosp       02        Alaska    Monday   train     38</span></span>
-<span><span class="co">## 9  2021-07-06     5   hosp       02        Alaska   Tuesday   train     38</span></span>
-<span><span class="co">## 10 2021-07-07     4   hosp       02        Alaska Wednesday   train     38</span></span>
+<span><span class="co">## 1  2021-06-28     2   hosp       02        Alaska    Monday   train     20</span></span>
+<span><span class="co">## 2  2021-06-29     5   hosp       02        Alaska   Tuesday   train     20</span></span>
+<span><span class="co">## 3  2021-06-30     2   hosp       02        Alaska Wednesday   train     20</span></span>
+<span><span class="co">## 4  2021-07-01     6   hosp       02        Alaska  Thursday   train     20</span></span>
+<span><span class="co">## 5  2021-07-02     3   hosp       02        Alaska    Friday   train     20</span></span>
+<span><span class="co">## 6  2021-07-03     7   hosp       02        Alaska  Saturday   train     20</span></span>
+<span><span class="co">## 7  2021-07-04     3   hosp       02        Alaska    Sunday   train     20</span></span>
+<span><span class="co">## 8  2021-07-05     2   hosp       02        Alaska    Monday   train     20</span></span>
+<span><span class="co">## 9  2021-07-06     5   hosp       02        Alaska   Tuesday   train     20</span></span>
+<span><span class="co">## 10 2021-07-07     4   hosp       02        Alaska Wednesday   train     20</span></span>
 <span><span class="co">##    SAEPOVRTALL_PT age_pop   Rt_raw       Rt</span></span>
 <span><span class="co">## 1             9.6  184927       NA       NA</span></span>
 <span><span class="co">## 2             9.6  184927       NA       NA</span></span>
@@ -450,16 +450,16 @@ Checking <em>Rt_projection()</em> results</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">trn_tst</span> <span class="op">==</span> <span class="st">"test"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span> <span class="co">#check values (forecast period)</span></span></code></pre></div>
 <pre><code><span><span class="co">##          date value signal location location_name       day trn_tst Region</span></span>
-<span><span class="co">## 1  2021-08-24    15   hosp       02        Alaska   Tuesday    test     38</span></span>
-<span><span class="co">## 2  2021-08-25    33   hosp       02        Alaska Wednesday    test     38</span></span>
-<span><span class="co">## 3  2021-08-26    18   hosp       02        Alaska  Thursday    test     38</span></span>
-<span><span class="co">## 4  2021-08-27    21   hosp       02        Alaska    Friday    test     38</span></span>
-<span><span class="co">## 5  2021-08-28    14   hosp       02        Alaska  Saturday    test     38</span></span>
-<span><span class="co">## 6  2021-08-29    19   hosp       02        Alaska    Sunday    test     38</span></span>
-<span><span class="co">## 7  2021-08-30    32   hosp       02        Alaska    Monday    test     38</span></span>
-<span><span class="co">## 8  2021-08-31    22   hosp       02        Alaska   Tuesday    test     38</span></span>
-<span><span class="co">## 9  2021-09-01    22   hosp       02        Alaska Wednesday    test     38</span></span>
-<span><span class="co">## 10 2021-09-02    23   hosp       02        Alaska  Thursday    test     38</span></span>
+<span><span class="co">## 1  2021-08-24    15   hosp       02        Alaska   Tuesday    test     20</span></span>
+<span><span class="co">## 2  2021-08-25    33   hosp       02        Alaska Wednesday    test     20</span></span>
+<span><span class="co">## 3  2021-08-26    18   hosp       02        Alaska  Thursday    test     20</span></span>
+<span><span class="co">## 4  2021-08-27    21   hosp       02        Alaska    Friday    test     20</span></span>
+<span><span class="co">## 5  2021-08-28    14   hosp       02        Alaska  Saturday    test     20</span></span>
+<span><span class="co">## 6  2021-08-29    19   hosp       02        Alaska    Sunday    test     20</span></span>
+<span><span class="co">## 7  2021-08-30    32   hosp       02        Alaska    Monday    test     20</span></span>
+<span><span class="co">## 8  2021-08-31    22   hosp       02        Alaska   Tuesday    test     20</span></span>
+<span><span class="co">## 9  2021-09-01    22   hosp       02        Alaska Wednesday    test     20</span></span>
+<span><span class="co">## 10 2021-09-02    23   hosp       02        Alaska  Thursday    test     20</span></span>
 <span><span class="co">##    SAEPOVRTALL_PT age_pop Rt_raw       Rt</span></span>
 <span><span class="co">## 1             9.6  184927     NA 1.018212</span></span>
 <span><span class="co">## 2             9.6  184927     NA 1.051603</span></span>
@@ -528,26 +528,26 @@ the desired timestep duration (2-day steps, 1 week steps, etc).</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">train_data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##         date value signal location location_name       day trn_tst Region</span></span>
-<span><span class="co">## 1 2021-06-28     2   hosp       02        Alaska    Monday   train     38</span></span>
-<span><span class="co">## 2 2021-06-29     5   hosp       02        Alaska   Tuesday   train     38</span></span>
-<span><span class="co">## 3 2021-06-30     2   hosp       02        Alaska Wednesday   train     38</span></span>
-<span><span class="co">## 4 2021-07-01     6   hosp       02        Alaska  Thursday   train     38</span></span>
-<span><span class="co">## 5 2021-07-02     3   hosp       02        Alaska    Friday   train     38</span></span>
-<span><span class="co">## 6 2021-07-03     7   hosp       02        Alaska  Saturday   train     38</span></span>
+<span><span class="co">## 1 2021-06-28     2   hosp       02        Alaska    Monday   train     20</span></span>
+<span><span class="co">## 2 2021-06-29     5   hosp       02        Alaska   Tuesday   train     20</span></span>
+<span><span class="co">## 3 2021-06-30     2   hosp       02        Alaska Wednesday   train     20</span></span>
+<span><span class="co">## 4 2021-07-01     6   hosp       02        Alaska  Thursday   train     20</span></span>
+<span><span class="co">## 5 2021-07-02     3   hosp       02        Alaska    Friday   train     20</span></span>
+<span><span class="co">## 6 2021-07-03     7   hosp       02        Alaska  Saturday   train     20</span></span>
 <span><span class="co">##   SAEPOVRTALL_PT age_pop Rt_raw Rt    s_pop      s_pov doy doy.1 Region.Wk</span></span>
-<span><span class="co">## 1            9.6  184927     NA NA 12.12772 -0.8064822   1     1    ID38W1</span></span>
-<span><span class="co">## 2            9.6  184927     NA NA 12.12772 -0.8064822   2     2    ID38W2</span></span>
-<span><span class="co">## 3            9.6  184927     NA NA 12.12772 -0.8064822   3     3    ID38W3</span></span>
-<span><span class="co">## 4            9.6  184927     NA NA 12.12772 -0.8064822   4     4    ID38W4</span></span>
-<span><span class="co">## 5            9.6  184927     NA NA 12.12772 -0.8064822   5     5    ID38W5</span></span>
-<span><span class="co">## 6            9.6  184927     NA NA 12.12772 -0.8064822   6     6    ID38W6</span></span>
+<span><span class="co">## 1            9.6  184927     NA NA 12.12772 -0.8064822   1     1    ID20W1</span></span>
+<span><span class="co">## 2            9.6  184927     NA NA 12.12772 -0.8064822   2     2    ID20W2</span></span>
+<span><span class="co">## 3            9.6  184927     NA NA 12.12772 -0.8064822   3     3    ID20W3</span></span>
+<span><span class="co">## 4            9.6  184927     NA NA 12.12772 -0.8064822   4     4    ID20W4</span></span>
+<span><span class="co">## 5            9.6  184927     NA NA 12.12772 -0.8064822   5     5    ID20W5</span></span>
+<span><span class="co">## 6            9.6  184927     NA NA 12.12772 -0.8064822   6     6    ID20W6</span></span>
 <span><span class="co">##   ID.Region.Wk week int_week.1 int_week.2 int_week.3 threeday_indx</span></span>
-<span><span class="co">## 1         2466   26          1          1          1    2021-06-28</span></span>
-<span><span class="co">## 2         2477   26          1          1          1    2021-06-28</span></span>
-<span><span class="co">## 3         2488   26          1          1          1    2021-07-01</span></span>
-<span><span class="co">## 4         2499   26          1          1          1    2021-07-01</span></span>
-<span><span class="co">## 5         2510   27          2          2          2    2021-07-01</span></span>
-<span><span class="co">## 6         2521   27          2          2          2    2021-07-04</span></span>
+<span><span class="co">## 1          795   26          1          1          1    2021-06-28</span></span>
+<span><span class="co">## 2          806   26          1          1          1    2021-06-28</span></span>
+<span><span class="co">## 3          817   26          1          1          1    2021-07-01</span></span>
+<span><span class="co">## 4          828   26          1          1          1    2021-07-01</span></span>
+<span><span class="co">## 5          839   27          2          2          2    2021-07-01</span></span>
+<span><span class="co">## 6          850   27          2          2          2    2021-07-04</span></span>
 <span><span class="co">##   threeday_indx.1 fourday_indx fourday_indx.1 fiveday_indx fiveday_indx.1</span></span>
 <span><span class="co">## 1               1   2021-06-28              1   2021-06-28              1</span></span>
 <span><span class="co">## 2               1   2021-06-28              1   2021-06-28              1</span></span>
@@ -556,19 +556,19 @@ the desired timestep duration (2-day steps, 1 week steps, etc).</p>
 <span><span class="co">## 5               2   2021-07-02              2   2021-07-03              2</span></span>
 <span><span class="co">## 6               3   2021-07-02              2   2021-07-03              2</span></span>
 <span><span class="co">##   eightday_indx eightday_indx.1 biweek_indx.1 Region.1 Region.2 Region.3</span></span>
-<span><span class="co">## 1    2021-06-28               1             1       38       38       38</span></span>
-<span><span class="co">## 2    2021-06-28               1             1       38       38       38</span></span>
-<span><span class="co">## 3    2021-06-28               1             1       38       38       38</span></span>
-<span><span class="co">## 4    2021-06-28               1             1       38       38       38</span></span>
-<span><span class="co">## 5    2021-06-28               1             1       38       38       38</span></span>
-<span><span class="co">## 6    2021-07-06               2             1       38       38       38</span></span>
+<span><span class="co">## 1    2021-06-28               1             1       20       20       20</span></span>
+<span><span class="co">## 2    2021-06-28               1             1       20       20       20</span></span>
+<span><span class="co">## 3    2021-06-28               1             1       20       20       20</span></span>
+<span><span class="co">## 4    2021-06-28               1             1       20       20       20</span></span>
+<span><span class="co">## 5    2021-06-28               1             1       20       20       20</span></span>
+<span><span class="co">## 6    2021-07-06               2             1       20       20       20</span></span>
 <span><span class="co">##   Region.4 Region.5</span></span>
-<span><span class="co">## 1       38       38</span></span>
-<span><span class="co">## 2       38       38</span></span>
-<span><span class="co">## 3       38       38</span></span>
-<span><span class="co">## 4       38       38</span></span>
-<span><span class="co">## 5       38       38</span></span>
-<span><span class="co">## 6       38       38</span></span></code></pre>
+<span><span class="co">## 1       20       20</span></span>
+<span><span class="co">## 2       20       20</span></span>
+<span><span class="co">## 3       20       20</span></span>
+<span><span class="co">## 4       20       20</span></span>
+<span><span class="co">## 5       20       20</span></span>
+<span><span class="co">## 6       20       20</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="response-variable">Response Variable<a class="anchor" aria-label="anchor" href="#response-variable"></a>
@@ -963,7 +963,7 @@ subdirectory</li>
 <h3 id="run-all-models">Run All Models<a class="anchor" aria-label="anchor" href="#run-all-models"></a>
 </h3>
 <div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">formulas.list</span> <span class="op">=</span> <span class="va">formulas.list</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span><span class="op">]</span> <span class="co">#short list for demo, fast run models</span></span>
+<code class="sourceCode R"><span><span class="co">#formulas.list = formulas.list[c(1:4)] #short list for demo, fast run models</span></span>
 <span></span>
 <span><span class="va">models_out</span> <span class="op">=</span> <span class="fu"><a href="../reference/run_model_list.html">run_model_list</a></span><span class="op">(</span>formulas.list<span class="op">=</span><span class="va">formulas.list</span>,</span>
 <span>                            dataStack<span class="op">=</span><span class="va">nrm.stk</span>,</span>
@@ -981,30 +981,46 @@ environment with file path names.</p>
 <p>Forecasts are formatted to the specifications required for submission
 to the <a href="https://github.com/reichlab/covid19-forecast-hub" class="external-link">covid19-forecast-hub</a>.</p>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#models_out[["full_mod"]] &lt;- full_model</span></span>
-<span><span class="fu"><a href="../reference/extract_forecasts.html">extract_forecasts</a></span><span class="op">(</span>mod_out<span class="op">=</span><span class="va">models_out</span>,</span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/extract_forecasts.html">extract_forecasts</a></span><span class="op">(</span>mod_out<span class="op">=</span><span class="va">models_out</span>,</span>
 <span>                  dataStack<span class="op">=</span><span class="va">nrm.stk</span>, train_data<span class="op">=</span><span class="va">train_data</span>,</span>
 <span>                  team <span class="op">=</span> <span class="st">"CFA"</span><span class="op">)</span></span></code></pre></div>
 <pre><code>## 
  [36mℹ [39m Writing model forecasts to analysis directory: 
 
- [32m✔ [39m base_rw1  [38;5;249m[1.2s] [39m                                
+ [32m✔ [39m base_rw1  [38;5;249m[1.8s] [39m                                
 ## 
  [36mℹ [39m Writing model forecasts to analysis directory: 
 
- [32m✔ [39m rw1_trend  [38;5;249m[1.1s] [39m                               
+ [32m✔ [39m rw1_trend  [38;5;249m[2.4s] [39m                               
 ## 
  [36mℹ [39m Writing model forecasts to analysis directory: 
 
- [32m✔ [39m base_car  [38;5;249m[1.2s] [39m                                
+ [32m✔ [39m base_car  [38;5;249m[2.3s] [39m                                
 ## 
  [36mℹ [39m Writing model forecasts to analysis directory: 
 
- [32m✔ [39m car_time  [38;5;249m[942ms] [39m                               </code></pre>
+ [32m✔ [39m car_time  [38;5;249m[2.2s] [39m                                
+## 
+ [36mℹ [39m Writing model forecasts to analysis directory: 
+
+ [32m✔ [39m car_sti  [38;5;249m[2.4s] [39m                                 
+## 
+ [36mℹ [39m Writing model forecasts to analysis directory: 
+
+ [32m✔ [39m car_wdays  [38;5;249m[2.1s] [39m                               
+## 
+ [36mℹ [39m Writing model forecasts to analysis directory: 
+
+ [32m✔ [39m car_rt  [38;5;249m[2.8s] [39m                                  
+## 
+ [36mℹ [39m Writing model forecasts to analysis directory: 
+
+ [32m✔ [39m car_full  [38;5;249m[2.5s] [39m                                </code></pre>
 <div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#check returned object</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">forecast_paths</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "base_rw1"  "rw1_trend" "base_car"  "car_time"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "base_rw1"  "rw1_trend" "base_car"  "car_time"  "car_sti"   "car_wdays"</span></span>
+<span><span class="co">## [7] "car_rt"    "car_full"</span></span></code></pre>
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">forecast_paths</span><span class="op">[[</span><span class="st">"rw1_trend"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span> <span class="co">#formatted for submission</span></span></code></pre></div>
 <pre><code><span><span class="co">##   forecast_date location               target target_end_date     type quantile</span></span>
@@ -1015,12 +1031,12 @@ to the <a href="https://github.com/reichlab/covid19-forecast-hub" class="externa
 <span><span class="co">## 5    2021-08-23       02 4 day ahead inc hosp      2021-08-27 quantile     0.01</span></span>
 <span><span class="co">## 6    2021-08-23       02 5 day ahead inc hosp      2021-08-28 quantile     0.01</span></span>
 <span><span class="co">##      value</span></span>
-<span><span class="co">## 1 18.04309</span></span>
+<span><span class="co">## 1 18.04242</span></span>
 <span><span class="co">## 2  0.00000</span></span>
 <span><span class="co">## 3  0.00000</span></span>
-<span><span class="co">## 4 15.69078</span></span>
-<span><span class="co">## 5 47.97832</span></span>
-<span><span class="co">## 6 83.44559</span></span></code></pre>
+<span><span class="co">## 4 15.69182</span></span>
+<span><span class="co">## 5 47.97946</span></span>
+<span><span class="co">## 6 83.44678</span></span></code></pre>
 <p><strong>View forecasts</strong> <em>extract_forecasts()</em> also
 returns a list (‘plot_paths’) of paths to plotting data from the
 extraction process. This data can be accessed from the
@@ -1030,15 +1046,15 @@ plot of forecast for a specific location.</p>
 will be plotted to PDF file and saved in the ‘Reports’ folder of the
 analysis directory. This may be time consuming!</p>
 <div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">OK_plot</span> <span class="op">=</span> <span class="fu"><a href="../reference/plot_location.html">plot_location</a></span><span class="op">(</span>plot_path <span class="op">=</span> <span class="va">plot_paths</span>, model <span class="op">=</span> <span class="st">"base_car"</span>, loc <span class="op">=</span> <span class="st">"Oklahoma"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">OK_plot</span> <span class="op">=</span> <span class="fu"><a href="../reference/plot_location.html">plot_location</a></span><span class="op">(</span>plot_path <span class="op">=</span> <span class="va">plot_paths</span>, model <span class="op">=</span> <span class="st">"car_full"</span>, loc <span class="op">=</span> <span class="st">"Oklahoma"</span><span class="op">)</span></span>
 <span><span class="va">OK_plot</span></span></code></pre></div>
 <p><img src="introduction_files/figure-html/unnamed-chunk-31-1.png" width="700"></p>
 <div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">AR_plot</span> <span class="op">=</span> <span class="fu"><a href="../reference/plot_location.html">plot_location</a></span><span class="op">(</span>plot_path <span class="op">=</span> <span class="va">plot_paths</span>, model <span class="op">=</span> <span class="st">"base_car"</span>, loc <span class="op">=</span> <span class="st">"Arkansas"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">AR_plot</span> <span class="op">=</span> <span class="fu"><a href="../reference/plot_location.html">plot_location</a></span><span class="op">(</span>plot_path <span class="op">=</span> <span class="va">plot_paths</span>, model <span class="op">=</span> <span class="st">"car_full"</span>, loc <span class="op">=</span> <span class="st">"Arkansas"</span><span class="op">)</span></span>
 <span><span class="va">AR_plot</span></span></code></pre></div>
 <p><img src="introduction_files/figure-html/unnamed-chunk-31-2.png" width="700"></p>
 <div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#plot_location(plot_path = plot_paths, model = "base_car") #plots and saves all locations to a pdf file</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">#plot_location(plot_path = plot_paths, model = "car_full") #plots and saves all locations to a pdf file</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="model-scoring">Model Scoring<a class="anchor" aria-label="anchor" href="#model-scoring"></a>
@@ -1060,16 +1076,16 @@ data should be handled; ‘remove’ from data or fill with ‘zero’.</p>
 <span></span>
 <span><span class="va">my_scores</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/score_WIS.html">score_WIS</a></span><span class="op">(</span>forecast_data <span class="op">=</span> <span class="va">forecast_paths</span>, truth<span class="op">=</span><span class="va">my_truth</span>, </span>
 <span>                       ingest <span class="op">=</span> <span class="st">"list"</span>, missing <span class="op">=</span> <span class="st">"remove"</span><span class="op">)</span> </span></code></pre></div>
-<pre><code><span><span class="co">## → A total of 2668 predictions weren't evalauted due lack of truth data</span></span></code></pre>
+<pre><code><span><span class="co">## → A total of 5336 predictions weren't evalauted due lack of truth data</span></span></code></pre>
 <div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">my_scores</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##      model       date location_name forecast_date       WIS</span></span>
-<span><span class="co">## 1 base_car 2021-08-23            01    2021-08-23 0.5998546</span></span>
-<span><span class="co">## 2 base_car 2021-08-23            02    2021-08-23 0.5645330</span></span>
-<span><span class="co">## 3 base_car 2021-08-23            04    2021-08-23 0.5753993</span></span>
-<span><span class="co">## 4 base_car 2021-08-23            05    2021-08-23 0.6124703</span></span>
-<span><span class="co">## 5 base_car 2021-08-23            06    2021-08-23 0.6039834</span></span>
-<span><span class="co">## 6 base_car 2021-08-23            08    2021-08-23 0.5703260</span></span></code></pre>
+<pre><code><span><span class="co">##      model       date location_name forecast_date      WIS</span></span>
+<span><span class="co">## 1 base_car 2021-08-23            01    2021-08-23 1.349751</span></span>
+<span><span class="co">## 2 base_car 2021-08-23            02    2021-08-23 1.105233</span></span>
+<span><span class="co">## 3 base_car 2021-08-23            04    2021-08-23 1.200149</span></span>
+<span><span class="co">## 4 base_car 2021-08-23            05    2021-08-23 1.460301</span></span>
+<span><span class="co">## 5 base_car 2021-08-23            06    2021-08-23 1.401860</span></span>
+<span><span class="co">## 6 base_car 2021-08-23            08    2021-08-23 1.142202</span></span></code></pre>
 <div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#overall</span></span>
 <span><span class="va">wis_rank</span> <span class="op">&lt;-</span> <span class="va">my_scores</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -1079,19 +1095,24 @@ data should be handled; ‘remove’ from data or fill with ‘zero’.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>wisRank <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/row_number.html" class="external-link">row_number</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">wis_rank</span> <span class="co">#mean absolute values</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 4 × 3</span></span></span>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 8 × 3</span></span></span>
 <span><span class="co">##   model     mean_wis wisRank</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> car_time      34.6       1</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> base_car      34.7       2</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> base_rw1     281.        3</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span> rw1_trend    307.        4</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> car_wdays     33.5       1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> car_rt        34.1       2</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> base_car      34.6       3</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> car_time      34.6       4</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> car_sti       34.9       5</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span> car_full      49.3       6</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">7</span> base_rw1     281.        7</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">8</span> rw1_trend    307.        8</span></span></code></pre>
 <p><strong>Diagnostic score plots</strong><br>
 The <em>plot_WIS_lines()</em> function has options to make quick plots
 of WIS scores returned by <em>score_WIS()</em>.</p>
 <div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">my_scores</span><span class="op">$</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "base_car"  "base_rw1"  "car_time"  "rw1_trend"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "base_car"  "base_rw1"  "car_full"  "car_rt"    "car_sti"   "car_time" </span></span>
+<span><span class="co">## [7] "car_wdays" "rw1_trend"</span></span></code></pre>
 <div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#lines showing absolute WIS</span></span>
 <span><span class="fu"><a href="../reference/plot_WIS_lines.html">plot_WIS_lines</a></span><span class="op">(</span><span class="va">my_scores</span>, by <span class="op">=</span> <span class="st">"date"</span>, range <span class="op">=</span> <span class="st">"abs"</span><span class="op">)</span></span></code></pre></div>
@@ -1110,7 +1131,7 @@ of WIS scores returned by <em>score_WIS()</em>.</p>
 <code class="sourceCode R"><span><span class="co">#tile option</span></span>
 <span><span class="fu"><a href="../reference/plot_WIS_lines.html">plot_WIS_lines</a></span><span class="op">(</span><span class="va">my_scores</span>, by <span class="op">=</span> <span class="st">"tile"</span>, range <span class="op">=</span> <span class="st">"scaled"</span>, </span>
 <span>               scale_model <span class="op">=</span> <span class="st">"base_rw1"</span>, limit <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning: Removed 432 rows containing missing values (`geom_tile()`).</span></span></code></pre>
+<pre><code><span><span class="co">## Warning: Removed 864 rows containing missing values (`geom_tile()`).</span></span></code></pre>
 <p><img src="introduction_files/figure-html/unnamed-chunk-33-4.png" width="700"></p>
 </div>
 <div class="section level3">
@@ -1121,14 +1142,18 @@ of WIS scores returned by <em>score_WIS()</em>.</p>
 is based on only the point estimates from forecasts.</p>
 <div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">my_mae</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/score_MAE.html">score_MAE</a></span><span class="op">(</span>forecast_data <span class="op">=</span> <span class="va">forecast_paths</span>, truth<span class="op">=</span><span class="va">my_truth</span>, ingest <span class="op">=</span> <span class="st">"list"</span>, missing <span class="op">=</span> <span class="st">"remove"</span><span class="op">)</span> </span></code></pre></div>
-<pre><code><span><span class="co">## → A total of 116 forecasts weren't evaluatd due lack of truth data</span></span></code></pre>
+<pre><code><span><span class="co">## → A total of 232 forecasts weren't evaluatd due lack of truth data</span></span></code></pre>
 <div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">my_mae</span></span></code></pre></div>
 <pre><code><span><span class="co">##       model   MAE    MAPE maeRank</span></span>
-<span><span class="co">## 1  base_car  41.5 0.01251       1</span></span>
-<span><span class="co">## 2  car_time  41.8 0.01261       2</span></span>
-<span><span class="co">## 3  base_rw1 325.6 0.09818       3</span></span>
-<span><span class="co">## 4 rw1_trend 353.3 0.10652       4</span></span></code></pre>
+<span><span class="co">## 1 car_wdays  41.4 0.01247       1</span></span>
+<span><span class="co">## 2    car_rt  41.8 0.01262       2</span></span>
+<span><span class="co">## 3  base_car  41.9 0.01262       3</span></span>
+<span><span class="co">## 4  car_time  41.9 0.01263       4</span></span>
+<span><span class="co">## 5   car_sti  42.1 0.01271       5</span></span>
+<span><span class="co">## 6  car_full  62.8 0.01893       6</span></span>
+<span><span class="co">## 7  base_rw1 325.6 0.09818       7</span></span>
+<span><span class="co">## 8 rw1_trend 353.3 0.10652       8</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -1150,10 +1175,14 @@ individual models in an ensemble.</p>
 <span></span>
 <span><span class="va">mod_rank</span> <span class="co">#note the scores rank models differently  </span></span></code></pre></div>
 <pre><code><span><span class="co">##       model   MAE    MAPE maeRank  mean_wis wisRank</span></span>
-<span><span class="co">## 1  base_car  41.5 0.01251       1  34.72064       2</span></span>
-<span><span class="co">## 2  car_time  41.8 0.01261       2  34.56927       1</span></span>
-<span><span class="co">## 3  base_rw1 325.6 0.09818       3 280.86038       3</span></span>
-<span><span class="co">## 4 rw1_trend 353.3 0.10652       4 307.10300       4</span></span></code></pre>
+<span><span class="co">## 1 car_wdays  41.4 0.01247       1  33.54621       1</span></span>
+<span><span class="co">## 2    car_rt  41.8 0.01262       2  34.10622       2</span></span>
+<span><span class="co">## 3  base_car  41.9 0.01262       3  34.57760       3</span></span>
+<span><span class="co">## 4  car_time  41.9 0.01263       4  34.64150       4</span></span>
+<span><span class="co">## 5   car_sti  42.1 0.01271       5  34.90884       5</span></span>
+<span><span class="co">## 6  car_full  62.8 0.01893       6  49.25360       6</span></span>
+<span><span class="co">## 7  base_rw1 325.6 0.09818       7 280.86031       7</span></span>
+<span><span class="co">## 8 rw1_trend 353.3 0.10652       8 307.10326       8</span></span></code></pre>
 <p>The <em>propose_weights()</em> function can the be applied to
 generate weights and write the resulting ensemble.</p>
 <div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
@@ -1167,10 +1196,14 @@ generate weights and write the resulting ensemble.</p>
 <div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">my_wis_weights</span> <span class="co">#The weights column reports the actual weights calculated for each model</span></span></code></pre></div>
 <pre><code><span><span class="co">##       model   MAE    MAPE maeRank  mean_wis wisRank mean_wis_weights</span></span>
-<span><span class="co">## 1  base_car  41.5 0.01251       1  34.72064       2        0.3157244</span></span>
-<span><span class="co">## 2  car_time  41.8 0.01261       2  34.56927       1        0.3158011</span></span>
-<span><span class="co">## 3  base_rw1 325.6 0.09818       3 280.86038       3        0.1908919</span></span>
-<span><span class="co">## 4 rw1_trend 353.3 0.10652       4 307.10300       4        0.1775826</span></span></code></pre>
+<span><span class="co">## 1 car_wdays  41.4 0.01247       1  33.54621       1       0.13693337</span></span>
+<span><span class="co">## 2    car_rt  41.8 0.01262       2  34.10622       2       0.13683448</span></span>
+<span><span class="co">## 3  base_car  41.9 0.01262       3  34.57760       3       0.13675124</span></span>
+<span><span class="co">## 4  car_time  41.9 0.01263       4  34.64150       4       0.13673996</span></span>
+<span><span class="co">## 5   car_sti  42.1 0.01271       5  34.90884       5       0.13669275</span></span>
+<span><span class="co">## 6  car_full  62.8 0.01893       6  49.25360       6       0.13415968</span></span>
+<span><span class="co">## 7  base_rw1 325.6 0.09818       7 280.86031       7       0.09326132</span></span>
+<span><span class="co">## 8 rw1_trend 353.3 0.10652       8 307.10326       8       0.08862720</span></span></code></pre>
 <div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#another example,this time using MAE and including a 'drop' option</span></span>
 <span><span class="va">my_mae_weights</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/propose_weights.html">propose_weights</a></span><span class="op">(</span>forecast_data <span class="op">=</span> <span class="va">forecast_paths</span>, </span>
@@ -1184,10 +1217,14 @@ generate weights and write the resulting ensemble.</p>
 <pre><code><span><span class="co">## → Writing ensemble 'mae_ensemble' to analysis directory</span></span></code></pre>
 <div class="sourceCode" id="cb86"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">my_mae_weights</span></span></code></pre></div>
-<pre><code><span><span class="co">##      model   MAE    MAPE maeRank  mean_wis wisRank MAE_weights</span></span>
-<span><span class="co">## 1 base_car  41.5 0.01251       1  34.72064       2   0.4492541</span></span>
-<span><span class="co">## 2 car_time  41.8 0.01261       2  34.56927       1   0.4488873</span></span>
-<span><span class="co">## 3 base_rw1 325.6 0.09818       3 280.86038       3   0.1018586</span></span></code></pre>
+<pre><code><span><span class="co">##       model   MAE    MAPE maeRank  mean_wis wisRank MAE_weights</span></span>
+<span><span class="co">## 1 car_wdays  41.4 0.01247       1  33.54621       1  0.15511855</span></span>
+<span><span class="co">## 2    car_rt  41.8 0.01262       2  34.10622       2  0.15500697</span></span>
+<span><span class="co">## 3  base_car  41.9 0.01262       3  34.57760       3  0.15497908</span></span>
+<span><span class="co">## 4  car_time  41.9 0.01263       4  34.64150       4  0.15497908</span></span>
+<span><span class="co">## 5   car_sti  42.1 0.01271       5  34.90884       5  0.15492329</span></span>
+<span><span class="co">## 6  car_full  62.8 0.01893       6  49.25360       6  0.14914923</span></span>
+<span><span class="co">## 7  base_rw1 325.6 0.09818       7 280.86031       7  0.07584379</span></span></code></pre>
 <div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#yet another example, not providing a rankCol -&gt; function assumes equal weighting </span></span>
 <span><span class="va">equal_mae_weights</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/propose_weights.html">propose_weights</a></span><span class="op">(</span>forecast_data <span class="op">=</span> <span class="va">forecast_paths</span>, </span>
@@ -1203,10 +1240,14 @@ generate weights and write the resulting ensemble.</p>
 <pre><code><span><span class="co">## → Writing ensemble 'equal_mae_ensemble' to analysis directory</span></span></code></pre>
 <div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">equal_mae_weights</span></span></code></pre></div>
-<pre><code><span><span class="co">##      model   MAE    MAPE maeRank  mean_wis wisRank rankCol rankCol_weights</span></span>
-<span><span class="co">## 1 base_car  41.5 0.01251       1  34.72064       2       1       0.3333333</span></span>
-<span><span class="co">## 2 car_time  41.8 0.01261       2  34.56927       1       1       0.3333333</span></span>
-<span><span class="co">## 3 base_rw1 325.6 0.09818       3 280.86038       3       1       0.3333333</span></span></code></pre>
+<pre><code><span><span class="co">##       model   MAE    MAPE maeRank  mean_wis wisRank rankCol rankCol_weights</span></span>
+<span><span class="co">## 1 car_wdays  41.4 0.01247       1  33.54621       1       1       0.1428571</span></span>
+<span><span class="co">## 2    car_rt  41.8 0.01262       2  34.10622       2       1       0.1428571</span></span>
+<span><span class="co">## 3  base_car  41.9 0.01262       3  34.57760       3       1       0.1428571</span></span>
+<span><span class="co">## 4  car_time  41.9 0.01263       4  34.64150       4       1       0.1428571</span></span>
+<span><span class="co">## 5   car_sti  42.1 0.01271       5  34.90884       5       1       0.1428571</span></span>
+<span><span class="co">## 6  car_full  62.8 0.01893       6  49.25360       6       1       0.1428571</span></span>
+<span><span class="co">## 7  base_rw1 325.6 0.09818       7 280.86031       7       1       0.1428571</span></span></code></pre>
 <div class="section level3">
 <h3 id="ensemble-re-scoring">Ensemble Re-scoring<a class="anchor" aria-label="anchor" href="#ensemble-re-scoring"></a>
 </h3>
@@ -1215,17 +1256,21 @@ comparison scores can be recalculated.</p>
 <div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">myDir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">su_yaml</span><span class="op">$</span><span class="va">out_dir_name</span>, <span class="st">"forecasts"</span><span class="op">)</span></span>
 <span><span class="va">new_mae</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/score_MAE.html">score_MAE</a></span><span class="op">(</span>forecast_data <span class="op">=</span> <span class="va">myDir</span>, truth<span class="op">=</span><span class="va">my_truth</span>, ingest <span class="op">=</span> <span class="st">"path"</span>, missing <span class="op">=</span> <span class="st">"remove"</span><span class="op">)</span> </span></code></pre></div>
-<pre><code><span><span class="co">## → A total of 203 forecasts weren't evaluatd due lack of truth data</span></span></code></pre>
+<pre><code><span><span class="co">## → A total of 319 forecasts weren't evaluatd due lack of truth data</span></span></code></pre>
 <div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">new_mae</span></span></code></pre></div>
-<pre><code><span><span class="co">##                model   MAE    MAPE maeRank</span></span>
-<span><span class="co">## 1           base_car  41.5 0.01251       1</span></span>
-<span><span class="co">## 2           car_time  41.8 0.01261       2</span></span>
-<span><span class="co">## 3       mae_ensemble  51.2 0.01544       3</span></span>
-<span><span class="co">## 4 equal_mae_ensemble 105.5 0.03181       4</span></span>
-<span><span class="co">## 5       wis_ensemble 120.7 0.03640       5</span></span>
-<span><span class="co">## 6           base_rw1 325.6 0.09818       6</span></span>
-<span><span class="co">## 7          rw1_trend 353.3 0.10652       7</span></span></code></pre>
+<pre><code><span><span class="co">##                 model   MAE    MAPE maeRank</span></span>
+<span><span class="co">## 1           car_wdays  41.4 0.01247       1</span></span>
+<span><span class="co">## 2              car_rt  41.8 0.01262       2</span></span>
+<span><span class="co">## 3            base_car  41.9 0.01262       3</span></span>
+<span><span class="co">## 4            car_time  41.9 0.01263       4</span></span>
+<span><span class="co">## 5             car_sti  42.1 0.01271       5</span></span>
+<span><span class="co">## 6        mae_ensemble  49.2 0.01485       6</span></span>
+<span><span class="co">## 7  equal_mae_ensemble  60.4 0.01820       7</span></span>
+<span><span class="co">## 8            car_full  62.8 0.01893       8</span></span>
+<span><span class="co">## 9        wis_ensemble  70.6 0.02130       9</span></span>
+<span><span class="co">## 10           base_rw1 325.6 0.09818      10</span></span>
+<span><span class="co">## 11          rw1_trend 353.3 0.10652      11</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="historic-forecasts">Historic Forecasts<a class="anchor" aria-label="anchor" href="#historic-forecasts"></a>
@@ -1312,7 +1357,7 @@ of imported historical forecast data from the Covid19-forecast-hub.</p>
 <span>                                  limit <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>                                  missing <span class="op">=</span> <span class="st">"remove"</span>,</span>
 <span>                                  write_copy <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## → A total of 4669 predictions weren't evalauted due lack of truth data</span></span></code></pre>
+<pre><code><span><span class="co">## → A total of 7337 predictions weren't evalauted due lack of truth data</span></span></code></pre>
 <pre><code><span><span class="co">## → Writing comparison scores to analysis directory</span></span></code></pre>
 <div class="sourceCode" id="cb111"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">my_plot</span><span class="op">)</span></span></code></pre></div>
