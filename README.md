@@ -10,6 +10,6 @@ devtools::install_github("JMHumphreys/CovidCAR")
 ## Resources  
 [**CovidCAR Website**](https://jmhumphreys.github.io/CovidCAR/index.html)     
   [CovidCAR Functions (Reference)](https://jmhumphreys.github.io/CovidCAR/reference/index.html)     
-  [Introduction and Overview (Articles)](https://jmhumphreys.github.io/CovidCAR/articles/overview.html)    
+  [Introduction and Overview (Articles)](https://jmhumphreys.github.io/CovidCAR/articles/introduction.html)    
 
   
