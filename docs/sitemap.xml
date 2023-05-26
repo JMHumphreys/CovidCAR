@@ -4,6 +4,15 @@
     <loc>https://jmhumphreys.github.io/CovidCAR/404.html</loc>
   </url>
   <url>
+    <loc>https://jmhumphreys.github.io/CovidCAR/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://jmhumphreys.github.io/CovidCAR/articles/introduction.html</loc>
+  </url>
+  <url>
+    <loc>https://jmhumphreys.github.io/CovidCAR/articles/overview.html</loc>
+  </url>
+  <url>
     <loc>https://jmhumphreys.github.io/CovidCAR/authors.html</loc>
   </url>
   <url>
@@ -14,6 +23,9 @@
   </url>
   <url>
     <loc>https://jmhumphreys.github.io/CovidCAR/reference/append_region_index.html</loc>
+  </url>
+  <url>
+    <loc>https://jmhumphreys.github.io/CovidCAR/reference/cast_date_string.html</loc>
   </url>
   <url>
     <loc>https://jmhumphreys.github.io/CovidCAR/reference/create_forecast_template.html</loc>
@@ -31,7 +43,13 @@
     <loc>https://jmhumphreys.github.io/CovidCAR/reference/getPovertyPop.html</loc>
   </url>
   <url>
+    <loc>https://jmhumphreys.github.io/CovidCAR/reference/get_api.html</loc>
+  </url>
+  <url>
     <loc>https://jmhumphreys.github.io/CovidCAR/reference/get_covid19_obs.html</loc>
+  </url>
+  <url>
+    <loc>https://jmhumphreys.github.io/CovidCAR/reference/get_hub_forecasts.html</loc>
   </url>
   <url>
     <loc>https://jmhumphreys.github.io/CovidCAR/reference/get_model_name.html</loc>
@@ -44,6 +62,12 @@
   </url>
   <url>
     <loc>https://jmhumphreys.github.io/CovidCAR/reference/inla_dlm.html</loc>
+  </url>
+  <url>
+    <loc>https://jmhumphreys.github.io/CovidCAR/reference/plot_forecasts_compare.html</loc>
+  </url>
+  <url>
+    <loc>https://jmhumphreys.github.io/CovidCAR/reference/plot_location.html</loc>
   </url>
   <url>
     <loc>https://jmhumphreys.github.io/CovidCAR/reference/plot_neighbors.html</loc>

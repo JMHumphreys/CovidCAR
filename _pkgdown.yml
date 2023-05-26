@@ -9,7 +9,7 @@ navbar:
     text: Articles
     menu:
     - text: Introduction and Overview
-      href: articles/overview.html
+      href: articles/introduction.html
    reference:
     text: Reference
     menu:

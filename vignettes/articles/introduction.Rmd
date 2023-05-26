@@ -1,7 +1,6 @@
 ---
 title: "CovidCAR Package Overview"
-date: "2023-05-18"
-categories: [R, statistical inference]
+categories: [R, statistical inference, INLA]
 description: "CovidCAR is intended to facilitate Covid19 model building, ensembling, and evalutaion"
 format:
   html:
