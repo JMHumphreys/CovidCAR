@@ -4,6 +4,7 @@
 #'
 #' @param unit A character string indicating whether to download state or county borders, default is "state".
 #' @param proj Projection for the shapefiles, defaults to "EPSG:5070".
+#' @param sdir Directory where file will be saved.  If NULL (default) function searches for directory assigned by setup_analysis().
 #' @return An object of class 'SpatialPolygonsDataFrame' which contains the state or county border polygons and their associated attributes.
 #' @examples
 #'
@@ -21,10 +22,12 @@
 #' @importFrom sf st_read st_transform st_make_valid
 #' @importFrom stats as nrow
 #' @export
-download_boundaries <- function(unit = "state", proj = "EPSG:5070") {
+download_boundaries <- function(unit = "state", proj = "EPSG:5070", sdir = NULL) {
 
+  if(is.null(sdir)){
   # Create output directory if it does not exist
   dir.create(paste0(su_yaml$out_dir_name,"/polygons"), recursive = TRUE, showWarnings = FALSE)
+  }
 
   if(unit == "county"){
     cli_alert("Warning: Intermittent timeout failures occur with county-level downloads")
@@ -51,11 +54,19 @@ download_boundaries <- function(unit = "state", proj = "EPSG:5070") {
     stop(e)
   })
 
+  if(is.null(sdir)){
   unzip(temp_zip, exdir = paste0(su_yaml$out_dir_name,"/polygons"))
   file.remove(temp_zip)
 
+  } else{
+  unzip(temp_zip, exdir = file.path(sdir))
+  file.remove(temp_zip)
+  }
+
   # Read shapefiles into sf object
+  if(is.null(sdir)){
   polygons <- st_read(dsn = paste0(su_yaml$out_dir_name,"/polygons"), layer = layer_name)
+  } else{polygons <- st_read(dsn = file.path(sdir), layer = layer_name)}
 
   # Project and fix topology
   polygons <- st_transform(polygons, crs = proj)

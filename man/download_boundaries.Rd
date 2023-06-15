@@ -4,12 +4,14 @@
 \alias{download_boundaries}
 \title{Download US Boundaries}
 \usage{
-download_boundaries(unit = "state", proj = "EPSG:5070")
+download_boundaries(unit = "state", proj = "EPSG:5070", sdir = NULL)
 }
 \arguments{
 \item{unit}{A character string indicating whether to download state or county borders, default is "state".}
 
 \item{proj}{Projection for the shapefiles, defaults to "EPSG:5070".}
+
+\item{sdir}{Directory where file will be saved.  If NULL (default) function searches for directory assigned by setup_analysis().}
 }
 \value{
 An object of class 'SpatialPolygonsDataFrame' which contains the state or county border polygons and their associated attributes.
