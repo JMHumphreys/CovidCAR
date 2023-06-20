@@ -1,6 +1,6 @@
 #' Generate a temporal index for a given set of dates
 #'
-#' This function returns the date from \code{y} that is the closest to each date in \code{x}.
+#' This function returns the date from \code{y} that is the closest match to each date in \code{x}.
 #'
 #' @param x A date vector, typically a column in a dataframe indicating date of observed case or incidence.
 #' @param y A vector of dates to search for matches, typically a customized series with specified interval length.
